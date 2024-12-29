@@ -1,0 +1,51 @@
+<mat-card class="mat-card h-full" [routerLink]="'/products/' + product._id">
+  <mat-card-header class="flex justify-between">
+    <!-- <div mat-card-avatar class="example-header-image"></div> -->
+    <mat-card-title>{{ product.name }}</mat-card-title>
+    @for (category of categories; track $index) { @if(product.categoryId ===
+    category._id) {
+    <mat-card-subtitle>{{ category.name }}</mat-card-subtitle>
+    } } @for (brand of brands; track $index) { @if(product.brandId ===
+    brand._id) {
+    <mat-card-subtitle>{{ brand.name }}</mat-card-subtitle>
+    } }
+  </mat-card-header>
+  <img
+    class="w-full h-52 object-cover"
+    mat-card-image
+    [src]="product.images[0]"
+    alt="{{ product.name }}"
+  />
+  <mat-card-content>
+    <p class="text-gray-700 description">
+      {{ product.description.split(" ").slice(0, 6).join(" ") }}...
+      <span class="full-description">{{
+        product.description
+          .split(" ")
+          .slice(6, product.description.length)
+          .join(" ")
+      }}</span>
+    </p>
+    <p class="text-lg font-bold text-blue-600">
+      {{ product.price | currency : "EGP" }}
+    </p>
+  </mat-card-content>
+  <mat-card-actions>
+    <button
+      mat-raised-button
+      color="primary"
+      class="w-full"
+      (click)="addToCart(); $event.stopPropagation()"
+    >
+      Add to Cart
+    </button>
+    <button
+      mat-button
+      color="accent"
+      class="w-full"
+      [routerLink]="'/products/' + product._id"
+    >
+      View Details
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -1,0 +1,139 @@
+<div class="px-40 mt-10 mb-10">
+  <div class="flex media-col-730 justify-between items-center">
+    <h1 class="text-2xl font-bold">Manage Product</h1>
+    <button
+      class="media-self-end-730 mb-10"
+      (click)="goToAddProductForm()"
+      mat-raised-button
+      color="primary"
+    >
+      Add New Product
+    </button>
+  </div>
+  <div class="shadow flex flex-col justify-center input mat-elevation-z8">
+    <mat-form-field class="mat-form-field" class="w-full">
+      <mat-label>Filter</mat-label>
+      <input
+        class="input"
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Search"
+        #input
+      />
+    </mat-form-field>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      class="mat-table-responsive"
+    >
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let row">{{ row._id }}</td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+      </ng-container>
+
+      <!-- shotDescription Column -->
+      <ng-container matColumnDef="shortDescription">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Short Description
+        </th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.shortDescription }}
+        </td>
+      </ng-container>
+
+      <!-- description Column -->
+      <!-- <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.description }}
+        </td>
+      </ng-container> -->
+
+      <!-- price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Price</th>
+        <td mat-cell *matCellDef="let row">{{ row.price }}</td>
+      </ng-container>
+      <!-- discount Column -->
+      <ng-container matColumnDef="discount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Discount</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.discount }}
+        </td>
+      </ng-container>
+      <!-- images Column -->
+      <ng-container matColumnDef="images">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>images</th>
+        <td mat-cell *matCellDef="let row">
+          @for (image of row.images; track $index) {
+          <img class="m-3" src="{{ image }}" alt="" />
+          }
+        </td>
+      </ng-container>
+      <!-- categoryId Column -->
+      <ng-container matColumnDef="categoryId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>CategoryId</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.categoryId }}
+        </td>
+      </ng-container>
+      <!-- brandId Column -->
+      <ng-container matColumnDef="brandId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>BrandId</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.brandId }}
+        </td>
+      </ng-container>
+
+      <!-- Fruit Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="flex">
+            <button
+              (click)="goToEditProductForm(row._id)"
+              mat-raised-button
+              color="accent"
+              class="mr-4"
+            >
+              Edit
+            </button>
+            <button
+              (click)="deleteProduct(row._id)"
+              mat-raised-button
+              color="warn"
+            >
+              Delete
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr
+        class="mat-header-row"
+        mat-header-row
+        *matHeaderRowDef="displayedColumns"
+      ></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr *matNoDataRow>
+        <td colspan="4">No data matching the filter "{{ input.value }}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator
+      class="mat-paginator"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      aria-label="Select"
+    ></mat-paginator>
+  </div>
+</div>

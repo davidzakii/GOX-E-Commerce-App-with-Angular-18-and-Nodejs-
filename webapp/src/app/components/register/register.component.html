@@ -1,0 +1,99 @@
+<div class="flex justify-center mb-5 mt-5 h-screen">
+  <div
+    class="flex justify-around items-center flex-col bg-blue-600 p-4 text-white"
+  >
+    <div>
+      <h1>Register</h1>
+      <p>Get access to your Orders, Wishlist and Recommendations</p>
+    </div>
+
+    <img src="images/404 page image/error-404_f9bbb4.png" alt="" />
+  </div>
+  <form class="flex flex-col shadow p-6" [formGroup]="registerForm">
+    <div class="flex flex-wrap w-full">
+      <div class="w-full gap-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Name</mat-label>
+          <input
+            formControlName="name"
+            name="name"
+            matInput
+            type="text"
+            placeholder="Enter your name"
+          />
+          @if(name?.invalid && (name?.dirty || name?.touched)){
+          @if(name?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(name?.errors?.['minlength']){
+          <mat-error>this field is at least 3 characters</mat-error>
+          } @if(name?.errors?.['maxlength']){
+          <mat-error>this field is max length 50 </mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Email</mat-label>
+          <input
+            formControlName="email"
+            name="name"
+            matInput
+            type="email"
+            placeholder="Enter your email"
+          />
+          @if(email?.invalid && (email?.dirty || email?.touched)){
+          @if(email?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(email?.errors?.['email']){
+          <mat-error>Please, enter valid email</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Password</mat-label>
+          <input
+            formControlName="password"
+            name="password"
+            matInput
+            [type]="hide()? 'password':'text'"
+            placeholder="Enter your password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            (click)="clickEvent($event)"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide()"
+          >
+            <mat-icon>{{ hide() ? "visibility_off" : "visibility" }}</mat-icon>
+          </button>
+          @if(password?.invalid && (password?.dirty || password?.touched)){
+          @if(password?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(password?.errors?.['minlength']){
+          <mat-error>Password must be at least 8 characters</mat-error>
+          } @if(password?.errors?.['pattern']){
+          <mat-error
+            >Password must at least contain 1 small letter 1 capital letter 1
+            special characters
+          </mat-error>
+          } }
+        </mat-form-field>
+      </div>
+      <div class="w-full flex flex-col justify-center">
+        <button
+          [disabled]="registerForm.invalid"
+          mat-raised-button
+          color="primary"
+          type="submit"
+          (click)="register()"
+        >
+          Register
+        </button>
+        <button
+          class="mt-4 shadow-2xl p-4 text-blue-600 font-bold"
+          routerLink="/login"
+        >
+          Already have an account
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

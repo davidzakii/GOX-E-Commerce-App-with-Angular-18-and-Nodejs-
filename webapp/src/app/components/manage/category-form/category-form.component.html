@@ -1,0 +1,61 @@
+<div class="flex flex-col h-screen items-center justify-center">
+  @if(id){
+  <h1>Update Category</h1>
+  }@else {
+  <h1>Add New Category</h1>
+  }
+  <form
+    class="shadow-sm w-96"
+    #categoryForm="ngForm"
+    (submit)="submitCategory(categoryForm)"
+  >
+    <!-- {{ categoryForm.value | json }} -->
+    <div class="flex flex-wrap">
+      <div class="w-full gap-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Category Name</mat-label>
+          <input
+            #name="ngModel"
+            name="name"
+            [(ngModel)]="categoryName"
+            matInput
+            type="text"
+            placeholder="Category Name"
+            required
+            pattern="^[a-zA-Z0-9\s\-_&]{3,}$"
+          />
+          @if(name.invalid && (name.dirty || name.touched)){
+          @if(name.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(name.errors?.['pattern']){
+          <mat-error
+            >It can include letters, numbers,spaces,& , hyphens (-), and
+            underscores (_), and must be at least 3 letters.</mat-error
+          >
+          } }
+        </mat-form-field>
+      </div>
+      <div class="w-full flex justify-center">
+        @if(id){
+        <button
+          [disabled]="categoryForm.invalid"
+          mat-raised-button
+          color="primary"
+          type="submit"
+        >
+          Update
+        </button>
+        }@else {
+        <button
+          [disabled]="categoryForm.invalid"
+          mat-raised-button
+          color="primary"
+          type="submit"
+        >
+          Add
+        </button>
+        }
+      </div>
+    </div>
+  </form>
+</div>

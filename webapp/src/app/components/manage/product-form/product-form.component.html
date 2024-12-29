@@ -1,0 +1,179 @@
+<div class="flex flex-col items-center">
+  @if(id){
+  <h1>Update Product</h1>
+  }@else {
+  <h1>Add New Product</h1>
+  }
+  <form class="p-4 shadow-2xl w-2/3 mb-10" [formGroup]="productForm">
+    <div class="flex flex-wrap w-full">
+      <div class="w-full gap-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Select Category</mat-label>
+          <mat-select formControlName="categoryId" name="categoryId">
+            @for (category of categories; track $index) {
+            <mat-option [value]="category._id">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+          @if(categoryId?.invalid && (categoryId?.dirty ||
+          categoryId?.touched)){ @if(categoryId?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(categoryId?.errors?.['minlength']){
+          <mat-error>It must be at least 16 characters.</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Select Brand</mat-label>
+          <mat-select formControlName="brandId" name="brandId">
+            @for (brand of brands; track $index) {
+            <mat-option [value]="brand._id">{{ brand.name }}</mat-option>
+            }
+          </mat-select>
+          @if(brandId?.invalid && (brandId?.dirty || brandId?.touched)){
+          @if(brandId?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(brandId?.errors?.['minlength']){
+          <mat-error>It must be at least 16 characters.</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Product Name</mat-label>
+          <input
+            formControlName="name"
+            name="name"
+            matInput
+            type="text"
+            placeholder="product Name"
+          />
+          @if(name?.invalid && (name?.dirty || name?.touched)){
+          @if(name?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(name?.errors?.['minlength']){
+          <mat-error>It must be at least 5 letters.</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Product Short Description</mat-label>
+          <input
+            formControlName="shortDescription"
+            name="shotDescription"
+            matInput
+            type="text"
+            placeholder="Product shot description"
+          />
+          @if(shortDescription?.invalid && (shortDescription?.dirty ||
+          shortDescription?.touched)){
+          @if(shortDescription?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(shortDescription?.errors?.['minlength']){
+          <mat-error>It must be at least 10 letters.</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Product Description</mat-label>
+          <textarea
+            formControlName="description"
+            name="description"
+            matInput
+            type="text"
+            rows="5"
+            placeholder="Product description"
+          ></textarea>
+          @if(description?.invalid && (description?.dirty ||
+          description?.touched)){ @if(description?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(description?.errors?.['minlength']){
+          <mat-error>It must be at least 50 letters.</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Product Price</mat-label>
+          <input
+            formControlName="price"
+            name="price"
+            matInput
+            type="text"
+            placeholder="Product price"
+          />
+          @if(price?.invalid && (price?.dirty || price?.touched)){
+          @if(price?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(price?.errors?.['pattern']){
+          <mat-error>It must be only number.</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Product Discount</mat-label>
+          <input
+            formControlName="discount"
+            name="discount"
+            matInput
+            type="text"
+            placeholder="Product discount"
+          />
+          @if(discount?.invalid && (discount?.dirty || discount?.touched)){
+          @if(discount?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(discount?.errors?.['pattern']){
+          <mat-error>It must be only number.</mat-error>
+          } }
+        </mat-form-field>
+        <div class="w-full flex gap-8">
+          <mat-checkbox formControlName="isFeatured">Is Featured</mat-checkbox>
+          <mat-checkbox formControlName="isNewProduct">Is New</mat-checkbox>
+        </div>
+        <div class="w-full flex flex-col" formArrayName="images">
+          <div class="flex justify-between">
+            <h4>Images</h4>
+            <button mat-raised-button color="primary" (click)="addImage()">
+              Add Image
+            </button>
+            <button
+              #btnRemoveImage
+              [disabled]="btnRemoveImageDisabled"
+              mat-raised-button
+              color="primary"
+              (click)="removeImage()"
+            >
+              removeImage
+            </button>
+          </div>
+          @for (image of images.controls; track $index) {
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label> Image {{ $index + 1 }} </mat-label>
+            <input matInput type="text" formControlName="{{ $index }}" />
+            @if(image?.invalid && (image?.dirty || image?.touched)){
+            @if(image?.errors?.['required']){
+            <mat-error>this field is required</mat-error>
+            } @if(image?.errors?.['minlength']){
+            <mat-error>It must be at least 5 characters.</mat-error>
+            } }
+          </mat-form-field>
+          }
+        </div>
+      </div>
+      <div class="w-full flex justify-center">
+        @if(id){
+        <button
+          [disabled]="productForm.invalid"
+          mat-raised-button
+          color="primary"
+          type="submit"
+          (click)="submitProductForm()"
+        >
+          Update
+        </button>
+        }@else {
+        <button
+          [disabled]="productForm.invalid"
+          mat-raised-button
+          color="primary"
+          type="submit"
+          (click)="submitProductForm()"
+        >
+          Add
+        </button>
+        }
+      </div>
+    </div>
+  </form>
+</div>

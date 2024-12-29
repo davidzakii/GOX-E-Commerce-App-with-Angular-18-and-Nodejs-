@@ -1,0 +1,18 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from './services/auth.service';
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, MatButtonModule],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
+})
+export class AppComponent implements OnInit {
+  title = 'GOX';
+  private _AuthService = inject(AuthService);
+  ngOnInit() {
+    this._AuthService.checkSessionValidity();
+  }
+}

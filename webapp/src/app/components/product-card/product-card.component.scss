@@ -1,0 +1,30 @@
+.m-2 {
+  margin: 0.5rem;
+}
+.mat-card {
+  background-color: white !important;
+  box-shadow: none;
+  transition: box-shadow 0.1s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .description {
+    position: relative;
+    overflow: hidden;
+
+    .full-description {
+      display: none;
+    }
+
+    &:hover .full-description {
+      display: inline;
+    }
+
+    &:hover::after {
+      content: "";
+      display: none;
+    }
+  }
+}

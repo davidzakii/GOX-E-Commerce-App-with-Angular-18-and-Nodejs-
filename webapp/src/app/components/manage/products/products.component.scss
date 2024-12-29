@@ -1,0 +1,27 @@
+/* filepath: /E:/Projects MEAN/E-commerce MEAN/Project Code/webapp/src/app/components/manage/products/products.component.scss */
+.mat-table-responsive {
+  overflow-x: auto;
+  display: block;
+  min-width: 200px;
+}
+
+.mat-form-field input {
+  min-width: 200px;
+}
+.input {
+  min-width: 200px;
+}
+
+.mat-paginator {
+  min-width: 200px;
+}
+
+@media (max-width: 730px) {
+  .media-col-730 {
+    flex-direction: column;
+  }
+  .media-self-end-730 {
+    align-self: flex-end;
+    height: fit-content;
+  }
+}

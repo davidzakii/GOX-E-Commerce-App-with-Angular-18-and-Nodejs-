@@ -1,0 +1,59 @@
+<header class="bg-black text-white">
+  <div class="flex justify-between items-center h-20 p-4">
+    <!-- Logo -->
+    <a class="text-2xl font-bold" routerLink="/home"
+      ><img
+        style="width: 120px; height: 80px"
+        src="images/Logo/GOXLOGO.jpg"
+        alt=""
+    /></a>
+
+    <!-- Search Bar -->
+    <mat-form-field appearance="fill" class="w-1/4">
+      <mat-label>Search</mat-label>
+      <input
+        matInput
+        placeholder="Search for products"
+        (keyup.enter)="onSearch($event)"
+      />
+    </mat-form-field>
+
+    <!-- Profile Link -->
+    <div class="flex justify-between items-center w-1/4">
+      @if(!isUserLoggedIn){
+      <a class="text-lg p-2" routerLink="/login" routerLinkActive="active" Arrow
+        >Log in</a
+      >
+      <a class="text-lg" routerLink="/register" routerLinkActive="active" Arrow
+        >Register
+      </a>
+      } @if(isUserLoggedIn){
+      <a
+        class="text-lg"
+        Arrow
+        routerLinkActive="active"
+        class="cursor-pointer"
+        (click)="goToProfile()"
+        >{{ userName }}</a
+      >
+      @if(isAdmin){
+      <a class="text-lg" routerLink="/admin" routerLinkActive="active"
+        >dashboard</a
+      >
+      }
+      <button class="text-lg" (click)="logout()">Logout</button>
+      }
+    </div>
+  </div>
+
+  <!-- Category Menu -->
+  <nav class="shadow-2xl bg-white text-black font-medium text-lg p-2">
+    <div class="flex justify-center space-x-4">
+      @for (category of caegories; track $index) {
+      <a (click)="searchCategory(category._id)" class="hover:text-blue-600">{{
+        category.name
+      }}</a>
+      }
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,59 @@
+
+<div class="flex flex-col h-screen items-center justify-center">
+  @if(id){
+  <h1>Update Brand</h1>
+  }@else {
+  <h1>Add New Brand</h1>
+  }
+  <form
+    class="shadow-sm w-96"
+    #brandForm="ngForm"
+    (submit)="submitBrand(brandForm)"
+  >
+    <!-- {{ categoryForm.value | json }} -->
+    <div class="flex flex-wrap">
+      <div class="w-full gap-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Brand Name</mat-label>
+          <input
+            #name="ngModel"
+            name="name"
+            [(ngModel)]="brandName"
+            matInput
+            type="text"
+            placeholder="Brand Name"
+            required
+            pattern="^.{3,}$"
+          />
+          @if(name.invalid && (name.dirty || name.touched)){
+          @if(name.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(name.errors?.['pattern']){
+          <mat-error>It can include must be at least 3 Characters.</mat-error>
+          } }
+        </mat-form-field>
+      </div>
+      <div class="w-full flex justify-center">
+        @if(id){
+        <button
+          [disabled]="brandForm.invalid"
+          mat-raised-button
+          color="primary"
+          type="submit"
+        >
+          Update
+        </button>
+        }@else {
+        <button
+          [disabled]="brandForm.invalid"
+          mat-raised-button
+          color="primary"
+          type="submit"
+        >
+          Add
+        </button>
+        }
+      </div>
+    </div>
+  </form>
+</div>
