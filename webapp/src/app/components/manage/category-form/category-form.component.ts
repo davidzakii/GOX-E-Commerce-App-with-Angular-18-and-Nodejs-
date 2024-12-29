@@ -42,7 +42,8 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
               this.categoryName = data.name;
             },
             error: (err) => {
-              alert('Error:' + JSON.stringify(err.error.message));
+              this._Router.navigate(['/NotFoundPage']);
+              // alert('Error:' + JSON.stringify(err.error.message));
             },
           });
         }

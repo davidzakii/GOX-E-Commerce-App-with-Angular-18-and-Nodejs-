@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { map, Observable, Subscription, switchMap } from 'rxjs';
 import { BrandService } from '../../../services/brand.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -33,13 +33,42 @@ export class BrandFormComponent {
               this.brandName = data.name;
             },
             error: (err) => {
-              alert('Error:' + JSON.stringify(err.error.message));
+              this._Router.navigate(['/NotFoundPage']);
+              // alert('Error:' + JSON.stringify(err.error.message));
             },
           });
         }
       },
     });
+    // let sub1 = this._ActivatedRoute.params
+    //   .pipe(
+    //     switchMap((params) => {
+    //       this.id = params['id'];
+    //       return this._BrandService.getAllBrands().pipe(
+    //         map((brands) => {
+    //           const ids = brands.map((brand) => brand._id);
+    //           return { ids, brands };
+    //         })
+    //       );
+    //     })
+    //   )
+    //   .subscribe({
+    //     next: ({ ids, brands }) => {
+    //       if (!ids.includes(this.id!)) this._Router.navigate(['/NotFoundPage']);
+    //       else {
+    //         let brand = brands.find((brand) => brand._id == this.id);
+    //         this.brandName = brand!.name;
+    //       }
+    //       // if (typeof brand !== 'string') {
+    //       //   // this.brandName = brand.name;
+    //       // } else this._Router.navigate(['/NotFoundPage']);
+    //     },
+    //     error: (err) => {
+    //       alert(err.error.message);
+    //     },
+    //   });
     this.subscribtion.add(sub);
+    // this.subscribtion.add(sub1);
   }
   submitBrand(brandForm: any) {
     const newCategory = brandForm.value;
@@ -71,6 +100,6 @@ export class BrandFormComponent {
   }
 
   ngOnDestroy() {
-    this.subscribtion.unsubscribe()
+    this.subscribtion.unsubscribe();
   }
 }

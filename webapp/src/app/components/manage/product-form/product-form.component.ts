@@ -121,6 +121,9 @@ export class ProductFormComponent implements OnInit, OnDestroy {
                 isNewProduct: !!product.isNewProduct,
               });
             },
+            error: (err) => {
+              this._Router.navigate(['/NotFoundPage']);
+            },
           });
         }
       },
