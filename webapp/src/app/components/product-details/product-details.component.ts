@@ -14,7 +14,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
   private customerService = inject(CustomerService);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  private subscription: Subscription[] = [];
+  private subscription: Subscription = new Subscription();
   ngOnInit() {
     let sub = this.customerService.getNewProducts().subscribe({
       next: (result) => {
@@ -29,12 +29,12 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
         });
       },
       error: (err) => {
-        console.log(err);
+        alert(err.error.message);
       },
     });
-    this.subscription.push(sub);
+    this.subscription.add(sub);
   }
   ngOnDestroy() {
-    this.subscription.forEach((sub) => sub.unsubscribe());
+    this.subscription.unsubscribe();
   }
 }

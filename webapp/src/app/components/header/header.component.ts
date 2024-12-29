@@ -23,7 +23,7 @@ import { CustomerService } from '../../services/customer.service';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   caegories: Category[] = [];
-  subscription: Subscription[] = [];
+  private subscription: Subscription = new Subscription();
   private _CustomerService = inject(CustomerService);
   private _AuthService = inject(AuthService);
   private router = inject(Router);
@@ -38,7 +38,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.isUserLoggedIn = res;
       },
     });
-    this.subscription.push(sub);
+    this.subscription.add(sub);
   }
   ngOnInit() {
     let sub = this._CustomerService.getCategories().subscribe({
@@ -49,7 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         alert(err.error.message);
       },
     });
-    this.subscription.push(sub);
+    this.subscription.add(sub);
   }
   goToProfile() {
     const name = this.userName.split(' ').join('.');
@@ -68,6 +68,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this._AuthService.logout();
   }
   ngOnDestroy() {
-    this.subscription.forEach((sub) => sub.unsubscribe());
+    this.subscription.unsubscribe();
   }
 }

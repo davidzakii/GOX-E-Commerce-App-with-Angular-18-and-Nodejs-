@@ -17,7 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 export class BrandFormComponent {
   brandName: string = '';
   id: string | undefined = undefined;
-  private subscribtion: Subscription[] = [];
+  private subscribtion: Subscription = new Subscription();
   private _BrandService = inject(BrandService);
   private _ActivatedRoute = inject(ActivatedRoute);
   private _Router = inject(Router);
@@ -39,7 +39,7 @@ export class BrandFormComponent {
         }
       },
     });
-    this.subscribtion.push(sub);
+    this.subscribtion.add(sub);
   }
   submitBrand(brandForm: any) {
     const newCategory = brandForm.value;
@@ -53,7 +53,7 @@ export class BrandFormComponent {
           alert('Error:' + JSON.stringify(err.error.message));
         },
       });
-      this.subscribtion.push(sub);
+      this.subscribtion.add(sub);
     } else if (brandForm.valid && this.id != undefined) {
       let sub = this._BrandService.updateBrand(newCategory, this.id).subscribe({
         next: (data) => {
@@ -64,13 +64,13 @@ export class BrandFormComponent {
           alert('Error:' + JSON.stringify(err.error.message));
         },
       });
-      this.subscribtion.push(sub);
+      this.subscribtion.add(sub);
     } else {
       alert('Please fill all the fields correctly');
     }
   }
 
   ngOnDestroy() {
-    this.subscribtion.forEach((sub) => sub.unsubscribe());
+    this.subscribtion.unsubscribe()
   }
 }

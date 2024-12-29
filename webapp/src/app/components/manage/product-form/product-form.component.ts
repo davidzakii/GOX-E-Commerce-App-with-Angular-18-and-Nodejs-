@@ -16,7 +16,6 @@ import { Product } from '../../../models/product';
 import { Category } from '../../../models/category';
 import { CategoryService } from '../../../services/category.service';
 import { MatSelectModule } from '@angular/material/select';
-import { JsonPipe } from '@angular/common';
 import { Brand } from '../../../models/brand';
 import { BrandService } from '../../../services/brand.service';
 
@@ -24,7 +23,6 @@ import { BrandService } from '../../../services/brand.service';
   selector: 'app-product-form',
   standalone: true,
   imports: [
-    JsonPipe,
     MatButtonModule,
     MatFormFieldModule,
     MatSelectModule,
@@ -39,7 +37,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
   brands: Brand[] = [];
   id: string | undefined = undefined;
-  private subscribtion: Subscription[] = [];
+  private subscribtion: Subscription = new Subscription();
   private _ProductService = inject(ProductService);
   private _CategoryServices = inject(CategoryService);
   private _BrandServices = inject(BrandService);
@@ -140,7 +138,9 @@ export class ProductFormComponent implements OnInit, OnDestroy {
         this.brands = brands;
       },
     });
-    this.subscribtion.push(sub, sub2, sub3);
+    this.subscribtion.add(sub);
+    this.subscribtion.add(sub2);
+    this.subscribtion.add(sub3);
   }
   submitProductForm() {
     if (this.id) {
@@ -155,7 +155,7 @@ export class ProductFormComponent implements OnInit, OnDestroy {
             alert(err.error.message);
           },
         });
-      this.subscribtion.push(sub1);
+      this.subscribtion.add(sub1);
     } else {
       let sub2 = this._ProductService
         .addProduct(this.productForm.value as unknown as Product)
@@ -168,10 +168,10 @@ export class ProductFormComponent implements OnInit, OnDestroy {
             alert(err.error.message);
           },
         });
-      this.subscribtion.push(sub2);
+      this.subscribtion.add(sub2);
     }
   }
   ngOnDestroy() {
-    this.subscribtion.forEach((sub) => sub.unsubscribe());
+    this.subscribtion.unsubscribe();
   }
 }

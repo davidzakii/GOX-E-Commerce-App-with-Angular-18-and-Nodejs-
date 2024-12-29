@@ -19,7 +19,7 @@ export class ProductCardComponent {
   @Input() product!: Product;
   categories: Category[] = [];
   brands: Brand[] = [];
-  subscription: Subscription[] = [];
+  private subscription: Subscription = new Subscription();
   private _CustomerService = inject(CustomerService);
   ngOnInit() {
     let sub1 = this._CustomerService.getCategories().subscribe({
@@ -32,7 +32,8 @@ export class ProductCardComponent {
         this.brands = brands;
       },
     });
-    this.subscription.push(sub1, sub2);
+    this.subscription.add(sub1);
+    this.subscription.add(sub2);
   }
 
   addToCart() {
@@ -40,6 +41,6 @@ export class ProductCardComponent {
   }
 
   ngOnDestroy() {
-    this.subscription.forEach((sub) => sub.unsubscribe());
+    this.subscription.unsubscribe();
   }
 }

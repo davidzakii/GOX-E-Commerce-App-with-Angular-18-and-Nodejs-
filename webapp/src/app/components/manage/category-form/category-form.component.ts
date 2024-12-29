@@ -19,7 +19,7 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
   categoryName: string = '';
   Category: Category[] = [];
   id: string | undefined = undefined;
-  private subscribtion: Subscription[] = [];
+  private subscribtion: Subscription = new Subscription();
   private _CategoryService = inject(CategoryService);
   private _ActivatedRoute = inject(ActivatedRoute);
   private _Router = inject(Router);
@@ -48,7 +48,7 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
         }
       },
     });
-    this.subscribtion.push(sub);
+    this.subscribtion.add(sub);
   }
   submitCategory(categoryForm: any) {
     const newCategory = categoryForm.value;
@@ -62,7 +62,7 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
           alert('Error:' + JSON.stringify(err.error.message));
         },
       });
-      this.subscribtion.push(sub);
+      this.subscribtion.add(sub);
     } else if (categoryForm.valid && this.id != undefined) {
       let sub = this._CategoryService
         .updateCategory(newCategory, this.id)
@@ -75,13 +75,13 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
             alert('Error:' + JSON.stringify(err.error.message));
           },
         });
-      this.subscribtion.push(sub);
+      this.subscribtion.add(sub);
     } else {
       alert('Please fill all the fields correctly');
     }
   }
 
   ngOnDestroy() {
-    this.subscribtion.forEach((sub) => sub.unsubscribe());
+    this.subscribtion.unsubscribe();
   }
 }

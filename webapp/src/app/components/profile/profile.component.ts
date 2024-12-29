@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit, OnDestroy {
-  private subscription: Subscription[] = [];
+  private subscription: Subscription = new Subscription();
   private authService = inject(AuthService);
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
@@ -25,9 +25,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
         }
       },
     });
-    this.subscription.push(sub);
+    this.subscription.add(sub);
   }
   ngOnDestroy() {
-    this.subscription.forEach((sub) => sub.unsubscribe());
+    this.subscription.unsubscribe();
   }
 }

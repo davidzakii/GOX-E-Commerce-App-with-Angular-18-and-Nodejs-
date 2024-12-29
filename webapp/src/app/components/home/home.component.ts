@@ -26,7 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   bannerImages: Product[] = [];
   newProducts: Product[] = [];
   featuredProducts: Product[] = [];
-  subscription: Subscription[] = [];
+  subscription: Subscription = new Subscription();
   private _CustomerService = inject(CustomerService);
   ngOnInit() {
     let sub1 = this._CustomerService.getNewProducts().subscribe({
@@ -42,9 +42,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.subscription.push(sub1, sub2);
+    this.subscription.add(sub1);
+    this.subscription.add(sub2);
   }
   ngOnDestroy() {
-    this.subscription.forEach((sub) => sub.unsubscribe());
+    this.subscription.unsubscribe();
   }
 }

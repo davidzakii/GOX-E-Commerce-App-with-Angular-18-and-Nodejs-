@@ -27,7 +27,7 @@ import { BrandService } from '../../../services/brand.service';
 export class BrandsComponent {
   displayedColumns: string[] = ['id', 'name', 'action'];
   dataSource = new MatTableDataSource<Brand>();
-  private subscribtion: Subscription[] = [];
+  private subscribtion: Subscription = new Subscription();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   constructor(private router: Router, private _BrandService: BrandService) {}
@@ -38,7 +38,7 @@ export class BrandsComponent {
         this.dataSource.data = data;
       },
     });
-    this.subscribtion.push(sub);
+    this.subscribtion.add(sub);
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -75,9 +75,9 @@ export class BrandsComponent {
         alert('Error:' + err.error.message);
       },
     });
-    this.subscribtion.push(sub);
+    this.subscribtion.add(sub);
   }
   ngOnDestroy() {
-    this.subscribtion.forEach((sub) => sub.unsubscribe());
+    this.subscribtion.unsubscribe();
   }
 }

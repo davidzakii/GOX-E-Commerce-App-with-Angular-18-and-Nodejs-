@@ -31,7 +31,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent implements OnDestroy {
-  private subscribtion: Subscription[] = [];
+  private subscribtion: Subscription = new Subscription();
   private _AuthService = inject(AuthService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -79,7 +79,7 @@ export class RegisterComponent implements OnDestroy {
           alert(err.error.message);
         },
       });
-    this.subscribtion.push(sub1);
+    this.subscribtion.add(sub1);
   }
   hide = signal(true);
   clickEvent(event: MouseEvent) {
@@ -87,6 +87,6 @@ export class RegisterComponent implements OnDestroy {
     event.stopPropagation();
   }
   ngOnDestroy() {
-    this.subscribtion.forEach((sub) => sub.unsubscribe());
+    this.subscribtion.unsubscribe();
   }
 }

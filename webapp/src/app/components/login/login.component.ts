@@ -31,7 +31,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnDestroy {
-  private subscribtion: Subscription[] = [];
+  private subscribtion: Subscription = new Subscription();
   private _AuthService = inject(AuthService);
   private fb = inject(FormBuilder);
   loginForm = this.fb.group({
@@ -58,7 +58,7 @@ export class LoginComponent implements OnDestroy {
           console.log(err.error.message);
         },
       });
-    this.subscribtion.push(sub1);
+    this.subscribtion.add(sub1);
   }
   hide = signal(true);
   clickEvent(event: MouseEvent) {
@@ -66,6 +66,6 @@ export class LoginComponent implements OnDestroy {
     event.stopPropagation();
   }
   ngOnDestroy() {
-    this.subscribtion.forEach((sub) => sub.unsubscribe());
+    this.subscribtion.unsubscribe();
   }
 }
