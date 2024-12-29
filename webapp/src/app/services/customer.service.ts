@@ -31,4 +31,7 @@ export class CustomerService {
   getBrands(): Observable<Brand[]> {
     return this.http.get<Brand[]>(`${environment.baseURL}/customer/brands`);
   }
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(`${environment.baseURL}/customer/products`);
+  }
 }
