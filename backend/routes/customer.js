@@ -2,6 +2,7 @@ import express from 'express';
 import {
   getFeaturedProduct,
   getNewProduct,
+  getProducts,
   getProductsByCategoryId,
 } from '../handlers/product-handler.js';
 import { getCategories } from '../handlers/category.handler.js';
@@ -30,6 +31,14 @@ router.get('/categories', async (req, res) => {
 });
 router.get('/brands', async (req, res) => {
   getBrands(req, res);
+});
+router.get('/products', async (req, res) => {
+  try {
+    const products = await getProducts();
+    res.send(products);
+  } catch (error) {
+    res.status(500).send({ message: 'Error retriving products' }, error);
+  }
 });
 
 export default router;
