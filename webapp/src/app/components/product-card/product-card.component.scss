@@ -1,6 +1,9 @@
 .m-2 {
   margin: 0.5rem;
 }
+.mx-10 {
+  margin: 0 1rem;
+}
 .mat-card {
   background-color: white !important;
   box-shadow: none;
@@ -19,7 +22,7 @@
     }
 
     &:hover .full-description {
-      display: inline;
+      display: inline-block;
     }
 
     &:hover::after {

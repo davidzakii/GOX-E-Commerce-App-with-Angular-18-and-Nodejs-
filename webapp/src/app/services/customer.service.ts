@@ -34,4 +34,17 @@ export class CustomerService {
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${environment.baseURL}/customer/products`);
   }
+  search(
+    searchTerm: string,
+    categoryId: string,
+    brandId: string,
+    page: string,
+    pageSize: string,
+    sortBy: string,
+    sortOrder: number
+  ): Observable<Product[]> {
+    return this.http.get<Product[]>(
+      `${environment.baseURL}/customer/product?searchTerm=${searchTerm}&categoryId=${categoryId}&brandId=${brandId}&page=${page}&pageSize=${pageSize}&sortBy=${sortBy}&sortOrder=${sortOrder}`
+    );
+  }
 }

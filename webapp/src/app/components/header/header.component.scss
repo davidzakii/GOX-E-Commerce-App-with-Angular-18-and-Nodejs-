@@ -2,3 +2,27 @@
   transition: transform 0.5s;
   color: red;
 }
+/* filepath: /E:/Projects MEAN/E-commerce MEAN/Project Code/webapp/src/app/components/header/header.component.scss */
+.header {
+  @apply bg-black text-white;
+}
+
+.header .menu-icon {
+  @apply md:hidden cursor-pointer;
+}
+
+.header .menu {
+  @apply hidden md:flex items-center space-x-4;
+}
+
+.header .mobile-menu {
+  @apply md:hidden bg-black text-white p-4;
+}
+
+.header .category-menu {
+  @apply shadow-2xl bg-white text-black font-medium text-lg p-2;
+}
+
+.header .category-menu a {
+  @apply cursor-pointer hover:text-blue-600;
+}

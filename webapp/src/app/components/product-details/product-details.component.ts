@@ -35,7 +35,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy {
     let sub = this.activatedRoute.params
       .pipe(
         switchMap((params) => {
-          return this.customerService.getNewProducts().pipe(
+          return this.customerService.getProducts().pipe(
             map((result) => {
               const ids = result.map((product) => product._id);
               const id = params['id'];

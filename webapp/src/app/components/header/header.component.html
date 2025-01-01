@@ -1,15 +1,12 @@
 <header class="bg-black text-white">
   <div class="flex justify-between items-center h-20 p-4">
     <!-- Logo -->
-    <a class="text-2xl font-bold" routerLink="/home"
-      ><img
-        style="width: 120px; height: 80px"
-        src="images/Logo/GOXLOGO.jpg"
-        alt=""
-    /></a>
+    <a class="text-2xl font-bold" routerLink="/home">
+      <img class="w-24 h-20" src="images/Logo/GOXLOGO.jpg" alt="Logo" />
+    </a>
 
     <!-- Search Bar -->
-    <mat-form-field appearance="fill" class="w-1/4">
+    <mat-form-field appearance="fill" class="hidden md:block w-1/2 md:w-1/4">
       <mat-label>Search</mat-label>
       <input
         matInput
@@ -18,42 +15,99 @@
       />
     </mat-form-field>
 
-    <!-- Profile Link -->
-    <div class="flex justify-between items-center w-1/4">
-      @if(!isUserLoggedIn){
-      <a class="text-lg p-2" routerLink="/login" routerLinkActive="active" Arrow
+    <!-- Profile Link and Menu Toggle -->
+    <div class="flex items-center space-x-4">
+      <mat-icon
+        *ngIf="showIcon"
+        class="md:hidden cursor-pointer"
+        (click)="toggleMenu()"
+        >menu</mat-icon
+      >
+      <div class="hidden md:flex items-center space-x-4">
+        <ng-container *ngIf="!isUserLoggedIn">
+          <a
+            Arrow
+            class="text-lg p-2"
+            routerLink="/login"
+            routerLinkActive="active"
+            >Log in</a
+          >
+          <a class="text-lg" routerLink="/register" routerLinkActive="active"
+            >Register</a
+          >
+        </ng-container>
+        <ng-container *ngIf="isUserLoggedIn">
+          <a
+            class="text-lg cursor-pointer"
+            routerLinkActive="active"
+            (click)="goToProfile()"
+            >{{ userName }}</a
+          >
+          <ng-container *ngIf="isAdmin">
+            <a
+              Arrow
+              class="text-lg"
+              routerLink="/admin"
+              routerLinkActive="active"
+              >Dashboard</a
+            >
+          </ng-container>
+          <button class="text-lg" (click)="logout()">Logout</button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div *ngIf="isMenuOpen" class="md:hidden bg-black text-white p-4">
+    <mat-form-field appearance="fill" class="w-full mb-4">
+      <mat-label>Search</mat-label>
+      <input
+        matInput
+        placeholder="Search for products"
+        (keyup.enter)="onSearch($event)"
+      />
+    </mat-form-field>
+    <ng-container *ngIf="!isUserLoggedIn">
+      <a class="block text-lg p-2" routerLink="/login" routerLinkActive="active"
         >Log in</a
       >
-      <a class="text-lg" routerLink="/register" routerLinkActive="active" Arrow
-        >Register
-      </a>
-      } @if(isUserLoggedIn){
       <a
-        class="text-lg"
-        Arrow
+        class="block text-lg p-2"
+        routerLink="/register"
         routerLinkActive="active"
-        class="cursor-pointer"
+        >Register</a
+      >
+    </ng-container>
+    <ng-container *ngIf="isUserLoggedIn">
+      <a
+        class="block text-lg p-2 cursor-pointer"
+        routerLinkActive="active"
         (click)="goToProfile()"
         >{{ userName }}</a
       >
-      @if(isAdmin){
-      <a class="text-lg" routerLink="/admin" routerLinkActive="active"
-        >dashboard</a
-      >
-      }
-      <button class="text-lg" (click)="logout()">Logout</button>
-      }
-    </div>
+      <ng-container *ngIf="isAdmin">
+        <a
+          class="block text-lg p-2"
+          routerLink="/admin"
+          routerLinkActive="active"
+          >Dashboard</a
+        >
+      </ng-container>
+      <button class="block text-lg p-2" (click)="logout()">Logout</button>
+    </ng-container>
   </div>
 
   <!-- Category Menu -->
   <nav class="shadow-2xl bg-white text-black font-medium text-lg p-2">
-    <div class="flex justify-center space-x-4">
-      @for (category of caegories; track $index) {
-      <a (click)="searchCategory(category._id)" class="hover:text-blue-600">{{
-        category.name
-      }}</a>
-      }
+    <div class="flex flex-wrap justify-center space-x-4">
+      <ng-container *ngFor="let category of categories; trackBy: trackByIndex">
+        <a
+          (click)="searchCategory(category._id)"
+          class="cursor-pointer hover:text-blue-600"
+          >{{ category.name }}</a
+        >
+      </ng-container>
     </div>
   </nav>
 </header>

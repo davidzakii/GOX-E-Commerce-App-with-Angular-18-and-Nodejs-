@@ -1,10 +1,10 @@
 <mat-card class="mat-card h-full" [routerLink]="'/products/' + product._id">
-  <mat-card-header class="flex justify-between">
+  <mat-card-header class="flex flex-wrap justify-between">
     <!-- <div mat-card-avatar class="example-header-image"></div> -->
     <mat-card-title>{{ product.name }}</mat-card-title>
     @for (category of categories; track $index) { @if(product.categoryId ===
     category._id) {
-    <mat-card-subtitle>{{ category.name }}</mat-card-subtitle>
+    <mat-card-subtitle class="mx-10">{{ category.name }}</mat-card-subtitle>
     } } @for (brand of brands; track $index) { @if(product.brandId ===
     brand._id) {
     <mat-card-subtitle>{{ brand.name }}</mat-card-subtitle>
@@ -18,11 +18,11 @@
   />
   <mat-card-content>
     <p class="text-gray-700 description">
-      {{ product.description.split(" ").slice(0, 6).join(" ") }}...
+      {{ product.shortDescription.split(" ").slice(0, 6).join(" ") }}...
       <span class="full-description">{{
         product.description
           .split(" ")
-          .slice(6, product.description.length)
+          .slice(6, product.shortDescription.length)
           .join(" ")
       }}</span>
     </p>
@@ -34,7 +34,7 @@
     <button
       mat-raised-button
       color="primary"
-      class="w-full"
+      class="w-full h-content"
       (click)="addToCart(); $event.stopPropagation()"
     >
       Add to Cart
@@ -42,7 +42,7 @@
     <button
       mat-button
       color="accent"
-      class="w-full"
+      class="w-full h-content"
       [routerLink]="'/products/' + product._id"
     >
       View Details
