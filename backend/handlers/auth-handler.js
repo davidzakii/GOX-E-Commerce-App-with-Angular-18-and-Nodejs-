@@ -2,6 +2,7 @@ import { User } from '../db/user.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { generateToken } from '../middleware/auth-middleware.js';
 
 dotenv.config();
 
@@ -35,18 +36,18 @@ export async function userLogin(req, res) {
   } else {
     const isMatch = await bcrypt.compare(req.body.password, userFound.password);
     if (isMatch) {
-      const token = jwt.sign(
-        {
-          id: userFound._id,
-          name: userFound.name,
-          email: userFound.email,
-          isAdmin: userFound.isAdmin,
-        },
-        process.env.SECRETKEY,
-        { expiresIn: '1h' }
-      );
+      // const token = jwt.sign(
+      //   {
+      //     id: userFound._id,
+      //     name: userFound.name,
+      //     email: userFound.email,
+      //     isAdmin: userFound.isAdmin,
+      //   },
+      //   process.env.SECRETKEY,
+      //   { expiresIn: '1h' }
+      // );
       res.send({
-        token,
+        token:generateToken(userFound),
         user: {
           id: userFound._id,
           name: userFound.name,

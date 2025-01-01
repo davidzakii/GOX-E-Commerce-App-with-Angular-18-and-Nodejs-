@@ -45,3 +45,44 @@ export async function getProductsByCategoryId(id) {
   });
   return newProducts;
 }
+
+export async function getProductForListing(
+  searchTerm,
+  categoryId,
+  brandId,
+  page,
+  pageSize,
+  sortBy,
+  sortOrder
+) {
+  if (!sortBy) {
+    sortBy = 'price';
+  }
+  if (!sortOrder) {
+    sortOrder = -1;
+  }
+  let queryFilter = {};
+  if (categoryId) {
+    queryFilter.categoryId = categoryId;
+  }
+  if (searchTerm) {
+    queryFilter.$or = [
+      { name: { $regex: searchTerm, $options: 'i' } },
+      { shortDescription: { $regex: searchTerm, $options: 'i' } },
+    ];
+  }
+  if (brandId) {
+    queryFilter.brandId = brandId;
+  }
+  console.log({
+    [sortBy]: +sortOrder,
+  });
+  // console.log(queryFilter);
+  const products = await Product.find(queryFilter)
+    .sort({
+      [sortBy]: +sortOrder,
+    })
+    .skip(pageSize * (page - 1))
+    .limit(pageSize);
+  return products;
+}

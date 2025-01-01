@@ -2,6 +2,7 @@ import express from 'express';
 import {
   getFeaturedProduct,
   getNewProduct,
+  getProductForListing,
   getProducts,
   getProductsByCategoryId,
 } from '../handlers/product-handler.js';
@@ -37,7 +38,28 @@ router.get('/products', async (req, res) => {
     const products = await getProducts();
     res.send(products);
   } catch (error) {
-    res.status(500).send({ message: 'Error retriving products' }, error);
+    res.status(500).send({ message: 'Error retriving products', error });
+  }
+});
+router.get('/product', async (req, res) => {
+  try {
+    const query = req.query;
+    console.log(query);
+    const products = await getProductForListing(
+      query.searchTerm,
+      query.categoryId,
+      query.brandId,
+      query.page,
+      query.pageSize,
+      query.sortBy,
+      query.sortOrder
+    );
+    if (products) res.send(products);
+    else {
+      res.send([]);
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Error retriving products', error });
   }
 });
 

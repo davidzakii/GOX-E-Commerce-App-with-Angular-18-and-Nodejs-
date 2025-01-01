@@ -1,6 +1,20 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
+export function generateToken(user) {
+  return jwt.sign(
+    {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+    },
+    process.env.SECRETKEY,
+    {
+      expiresIn: '10d',
+    }
+  );
+}
 export function verifyToken(req, res, next) {
   const token = req.header('Authorization');
   if (!token) {
