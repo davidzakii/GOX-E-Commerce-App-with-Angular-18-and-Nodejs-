@@ -4,10 +4,10 @@
     <mat-card-title>{{ product.name }}</mat-card-title>
     @for (category of categories; track $index) { @if(product.categoryId ===
     category._id) {
-    <mat-card-subtitle class="mx-10">{{ category.name }}</mat-card-subtitle>
+    <mat-card-subtitle class="mx-10">{{ category?.name }}</mat-card-subtitle>
     } } @for (brand of brands; track $index) { @if(product.brandId ===
     brand._id) {
-    <mat-card-subtitle>{{ brand.name }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ brand?.name }}</mat-card-subtitle>
     } }
   </mat-card-header>
   <img
@@ -26,26 +26,38 @@
           .join(" ")
       }}</span>
     </p>
-    <p class="text-lg font-bold text-blue-600">
-      {{ product.price | currency : "EGP" }}
-    </p>
+    <div class="flex flex-wrap justify-between items-center">
+      <strong class="block my-2">Price: </strong>
+      <div class="flex flex-wrap gap-2">
+        <span class="!text-xl text-gray-400"
+          ><s>{{ product.price | currency : "EGP" }}</s></span
+        >
+        <span class="text-xl text-orange-500"
+          >{{ getDiscountPercentage | currency : "EGP" }}% OFF</span
+        >
+        <span class="text-green-500 font-bold">{{
+          sellingPrice | currency : "EGP"
+        }}</span>
+      </div>
+    </div>
   </mat-card-content>
-  <mat-card-actions>
-    <button
-      mat-raised-button
-      color="primary"
-      class="w-full h-content"
-      (click)="addToCart(); $event.stopPropagation()"
-    >
-      Add to Cart
+  <mat-card-actions class="flex justify-between gap-2">
+    <button mat-fab color="accent" [routerLink]="'/products/' + product._id">
+      <mat-icon>info</mat-icon>
     </button>
     <button
-      mat-button
-      color="accent"
-      class="w-full h-content"
-      [routerLink]="'/products/' + product._id"
+      mat-fab
+      color="warn"
+      (click)="addToWishList(); $event.stopPropagation()"
     >
-      View Details
+      @if(isInWishList()){
+      <mat-icon class="text-red-500">favorite</mat-icon>
+      }@else {
+      <mat-icon class="text-red-500">favorite_border</mat-icon>
+      }
+    </button>
+    <button mat-fab color="warn">
+      <mat-icon>add_shopping_cart</mat-icon>
     </button>
   </mat-card-actions>
 </mat-card>

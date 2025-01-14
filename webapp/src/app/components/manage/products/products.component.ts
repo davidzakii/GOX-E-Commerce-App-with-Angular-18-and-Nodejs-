@@ -15,6 +15,10 @@ import { Subscription } from 'rxjs';
 import { Product } from '../../../models/product';
 import { Router } from '@angular/router';
 import { ProductService } from '../../../services/product.service';
+import { Category } from '../../../models/category';
+import { Brand } from '../../../models/brand';
+import { CategoryService } from '../../../services/category.service';
+import { BrandService } from '../../../services/brand.service';
 
 @Component({
   selector: 'app-products',
@@ -42,13 +46,17 @@ export class ProductsComponent implements OnInit, AfterViewInit, OnDestroy {
     'brandId',
     'action',
   ];
+  categories: Category[] = [];
+  brands: Brand[] = [];
   dataSource = new MatTableDataSource<Product>();
   private subscribtion: Subscription = new Subscription();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   constructor(
     private router: Router,
-    private _ProductService: ProductService
+    private _ProductService: ProductService,
+    private categoryService: CategoryService,
+    private brandService: BrandService
   ) {}
 
   ngOnInit() {
@@ -57,7 +65,25 @@ export class ProductsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.data = data;
       },
     });
+    let sub2 = this.categoryService.getAllCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (err) => {
+        alert(err.error.message);
+      },
+    });
+    let sub3 = this.brandService.getAllBrands().subscribe({
+      next: (brands) => {
+        this.brands = brands;
+      },
+      error: (err) => {
+        alert(err.error.message);
+      },
+    });
     this.subscribtion.add(sub);
+    this.subscribtion.add(sub2);
+    this.subscribtion.add(sub3);
   }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;

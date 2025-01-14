@@ -6,7 +6,6 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
   try {
     let newUser = await addUser(req.body);
-    console.log(newUser);
     if (newUser) {
       res.status(201).send({ message: 'user registered' });
     } else {

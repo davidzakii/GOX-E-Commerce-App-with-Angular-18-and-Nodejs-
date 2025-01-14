@@ -4,11 +4,23 @@ import { CustomerService } from '../../services/customer.service';
 import { map, Subscription, switchMap } from 'rxjs';
 import { Product } from '../../models/product';
 import { ProductCardComponent } from '../product-card/product-card.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { Category } from '../../models/category';
+import { Brand } from '../../models/brand';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [ProductCardComponent],
+  imports: [
+    ProductCardComponent,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonModule,
+  ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
 })
@@ -17,6 +29,14 @@ export class ProductListComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private customerService = inject(CustomerService);
   private subscription: Subscription = new Subscription();
+  categories: Category[] = [];
+  brands: Brand[] = [];
+  selectedCategory: string = '';
+  selectedBrand: string = '';
+  order: string = '';
+  page: number = 1;
+  pageSize: number = 1;
+  isNextPage: boolean = false;
   // ngOnInit() {
   //   // let sub = this.customerService.getCategories().subscribe({
   //   //   next: (categories) => {
@@ -62,14 +82,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
     let sub = this.activatedRoute.queryParams
       .pipe(
         switchMap((queryParams) => {
-          console.log(queryParams);
+          this.selectedCategory = queryParams['categoryId'];
+          this.selectedBrand = queryParams['brandId'];
+          this.page = queryParams['page'] || 1;
+          this.pageSize = queryParams['pageSize'] || 10;
           return this.customerService
             .search(
               queryParams['searchTerm'] || '',
               queryParams['categoryId'] || '',
               queryParams['brandId'] || '',
-              queryParams['page'] || '',
-              queryParams['pageSize'] || '',
+              this.page,
+              this.pageSize,
               queryParams['sortBy'] || 'price',
               queryParams['sortOrder'] || -1
             )
@@ -79,12 +102,60 @@ export class ProductListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (products) => {
           this.products = products;
+          this.isNextPage = products.length < this.pageSize;
         },
         error: (err) => {
           alert(err.error.message);
         },
       });
+    let sub1 = this.customerService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+    });
+    let sub2 = this.customerService.getBrands().subscribe({
+      next: (brands) => {
+        this.brands = brands;
+      },
+    });
+    this.subscription.add(sub1);
     this.subscription.add(sub);
+    this.subscription.add(sub2);
+  }
+  updateQueryParams(params: { [key: string]: any }) {
+    const queryParams = {
+      categoryId: this.selectedCategory,
+      brandId: this.selectedBrand,
+      sortOrder: this.order,
+      page: this.page,
+      pageSize: this.pageSize,
+      ...params,
+    };
+    this.router.navigate(['/products'], { queryParams });
+  }
+  onCategoryChange() {
+    this.router.navigate(['/products'], {
+      queryParams: {
+        categoryId: this.selectedCategory,
+        brandId: this.selectedBrand,
+      },
+    });
+  }
+  onBrandChange() {
+    this.page = 1;
+    this.updateQueryParams({});
+  }
+  orderChange() {
+    this.updateQueryParams({});
+  }
+  pageChangeNext() {
+    this.page++;
+    this.updateQueryParams({});
+  }
+  pageChangePrevious() {
+    this.isNextPage = false;
+    this.page--;
+    this.updateQueryParams({});
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();

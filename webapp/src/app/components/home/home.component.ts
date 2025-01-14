@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { ProductCardComponent } from '../product-card/product-card.component';
 import { CarouselModule, OwlOptions } from 'ngx-owl-carousel-o';
 import { RouterLink } from '@angular/router';
+import { WishListService } from '../../services/wish-list.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -28,6 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   featuredProducts: Product[] = [];
   subscription: Subscription = new Subscription();
   private _CustomerService = inject(CustomerService);
+  private wishListService = inject(WishListService);
   ngOnInit() {
     let sub1 = this._CustomerService.getNewProducts().subscribe({
       next: (products) => {
@@ -41,9 +43,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.bannerImages.push(...products);
       },
     });
-
+    let sub3 = this.wishListService.init();
     this.subscription.add(sub1);
     this.subscription.add(sub2);
+    this.subscription.add(sub3);
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();

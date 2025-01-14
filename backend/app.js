@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+// import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import routerCategory from './routes/category.js';
@@ -7,8 +8,9 @@ import routerBrand from './routes/brand.js';
 import routerProduct from './routes/product.js';
 import customerRoute from './routes/customer.js';
 import authRoute from './routes/auth.js';
+import routerWishList from './routes/wishList.js';
+import routerCart from './routes/cart.js';
 import { isAdmin, verifyToken } from './middleware/auth-middleware.js';
-import { Product } from './db/product.js';
 
 dotenv.config();
 /*
@@ -45,6 +47,8 @@ app.use('/brand', verifyToken, isAdmin, routerBrand);
 app.use('/product', verifyToken, isAdmin, routerProduct);
 app.use('/customer', customerRoute);
 app.use('/user', authRoute);
+app.use('/wishList', verifyToken, routerWishList);
+app.use('/cart', verifyToken, routerCart);
 
 mongoose
   .connect(process.env.MONGODB_LOCAL)

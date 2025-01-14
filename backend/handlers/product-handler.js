@@ -1,4 +1,5 @@
 import { Product } from '../db/product.js';
+import { WishList } from '../db/wishlist.js';
 
 export async function getProducts() {
   let products = await Product.find();
@@ -23,6 +24,14 @@ export async function updateProduct(id, model) {
 }
 export async function deleteProduct(id) {
   await Product.findByIdAndDelete(id);
+  await WishList.updateMany(
+    {},
+    {
+      $pull: {
+        products: { productId: { $nin: await Product.distinct('_id') } },
+      },
+    }
+  );
   return;
 }
 
@@ -60,6 +69,8 @@ export async function getProductForListing(
   }
   if (!sortOrder) {
     sortOrder = -1;
+  } else {
+    sortOrder = +sortOrder;
   }
   let queryFilter = {};
   if (categoryId) {
@@ -74,10 +85,6 @@ export async function getProductForListing(
   if (brandId) {
     queryFilter.brandId = brandId;
   }
-  console.log({
-    [sortBy]: +sortOrder,
-  });
-  // console.log(queryFilter);
   const products = await Product.find(queryFilter)
     .sort({
       [sortBy]: +sortOrder,

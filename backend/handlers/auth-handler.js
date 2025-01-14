@@ -31,23 +31,41 @@ export async function addUser(model) {
 
 export async function userLogin(req, res) {
   let userFound = await User.findOne({ email: req.body.email });
-  if (!userFound) {
-    res.status(404).send({ message: 'user not found' });
-  } else {
+  //don't use this way becuase there is gap by email not found
+  // if (!userFound) {
+  //   res.status(404).send({ message: 'user not found' });
+  // } else {
+  //   const isMatch = await bcrypt.compare(req.body.password, userFound.password);
+  //   if (isMatch) {
+  //     // const token = jwt.sign(
+  //     //   {
+  //     //     id: userFound._id,
+  //     //     name: userFound.name,
+  //     //     email: userFound.email,
+  //     //     isAdmin: userFound.isAdmin,
+  //     //   },
+  //     //   process.env.SECRETKEY,
+  //     //   { expiresIn: '1h' }
+  //     // );
+  //     res.send({
+  //       token:generateToken(userFound),
+  //       user: {
+  //         id: userFound._id,
+  //         name: userFound.name,
+  //         email: userFound.email,
+  //         isAdmin: userFound.isAdmin,
+  //       },
+  //     });
+  //   } else {
+  //     res.status(400).send({ message: 'password not correct' });
+  //   }
+  // }
+
+  if (userFound) {
     const isMatch = await bcrypt.compare(req.body.password, userFound.password);
     if (isMatch) {
-      // const token = jwt.sign(
-      //   {
-      //     id: userFound._id,
-      //     name: userFound.name,
-      //     email: userFound.email,
-      //     isAdmin: userFound.isAdmin,
-      //   },
-      //   process.env.SECRETKEY,
-      //   { expiresIn: '1h' }
-      // );
       res.send({
-        token:generateToken(userFound),
+        token: generateToken(userFound),
         user: {
           id: userFound._id,
           name: userFound.name,
@@ -56,7 +74,7 @@ export async function userLogin(req, res) {
         },
       });
     } else {
-      res.status(400).send({ message: 'password not correct' });
+      res.status(400).send({ message: 'Email or password  not correct' });
     }
   }
 }

@@ -28,18 +28,31 @@ export class CustomerService {
       `${environment.baseURL}/customer/categories`
     );
   }
+  getCategoryById(id: string): Observable<Category> {
+    return this.http.get<Category>(
+      `${environment.baseURL}/customer/categories/${id}`
+    );
+  }
   getBrands(): Observable<Brand[]> {
     return this.http.get<Brand[]>(`${environment.baseURL}/customer/brands`);
   }
+  getBrandById(id: string): Observable<Brand> {
+    return this.http.get<Brand>(`${environment.baseURL}/customer/brands/${id}`);
+  }
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${environment.baseURL}/customer/products`);
+  }
+  getProductById(id: string): Observable<Product> {
+    return this.http.get<Product>(
+      `${environment.baseURL}/customer/products/${id}`
+    );
   }
   search(
     searchTerm: string,
     categoryId: string,
     brandId: string,
-    page: string,
-    pageSize: string,
+    page: number,
+    pageSize: number,
     sortBy: string,
     sortOrder: number
   ): Observable<Product[]> {

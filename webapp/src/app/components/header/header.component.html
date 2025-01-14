@@ -52,6 +52,9 @@
               >Dashboard</a
             >
           </ng-container>
+          <a routerLink="/wishList" routerLinkActive="active"
+            ><mat-icon class="text-red-500">favorite</mat-icon></a
+          >
           <button class="text-lg" (click)="logout()">Logout</button>
         </ng-container>
       </div>
@@ -94,6 +97,9 @@
           >Dashboard</a
         >
       </ng-container>
+      <a routerLink="/wishList" routerLinkActive="active"
+        ><mat-icon class="text-red-500">favorite</mat-icon></a
+      >
       <button class="block text-lg p-2" (click)="logout()">Logout</button>
     </ng-container>
   </div>

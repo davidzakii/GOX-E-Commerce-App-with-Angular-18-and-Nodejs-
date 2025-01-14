@@ -19,6 +19,7 @@ import { AdminDashboardComponent } from './components/manage/admin-dashboard/adm
 import { AdminloginComponent } from './components/adminlogin/adminlogin.component';
 import { afteradminloginGuard } from './guards/afteradminlogin.guard';
 import { ProfileComponent } from './components/profile/profile.component';
+import { WishListComponent } from './components/wish-list/wish-list.component';
 export const routes: Routes = [
   {
     path: '',
@@ -47,6 +48,11 @@ export const routes: Routes = [
       {
         path: 'profile/:username',
         component: ProfileComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'wishList',
+        component: WishListComponent,
         canActivate: [authGuard],
       },
       {

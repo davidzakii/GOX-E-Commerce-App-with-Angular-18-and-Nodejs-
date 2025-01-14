@@ -75,8 +75,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.router.navigateByUrl('/products?searchTerm=' + $event.target.value);
     }
   }
-  searchCategory(caegoryId: string) {
-    this.router.navigateByUrl('/products?categoryId=' + caegoryId);
+  searchCategory(categoryId: string) {
+    this.router.navigate(['/products'], {
+      queryParams: { categoryId: categoryId },
+    });
   }
   logout() {
     this._AuthService.logout();
