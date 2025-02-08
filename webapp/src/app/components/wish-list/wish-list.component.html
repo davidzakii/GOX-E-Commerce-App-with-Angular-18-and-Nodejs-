@@ -1,12 +1,12 @@
 <div class="my-4">
   <div class="flex flex-wrap flex-1 gap-4 justify-center">
-    @for (product of products; track $index) {
+    @for (product of productInWishList; track $index) {
     <div class="w-full shadow-lg sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
       <app-product-card [product]="product"></app-product-card>
     </div>
     <!-- <button (click)="deleteProduct(product.productId._id)">delete</button> -->
     }@empty {
-    <h3 class="p-10">Wish list is empty</h3>
+    <h3 class="p-10" style="height: 270px">Wish list is empty</h3>
     }
   </div>
 </div>

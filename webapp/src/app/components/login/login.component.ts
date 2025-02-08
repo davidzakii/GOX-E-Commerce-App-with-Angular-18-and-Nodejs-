@@ -11,9 +11,9 @@ import { AuthService } from '../../services/auth.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
-import { User } from '../../models/user';
+import { RouterLink, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -28,44 +28,61 @@ import { Subscription } from 'rxjs';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnDestroy {
-  private subscribtion: Subscription = new Subscription();
+  private subscription: Subscription = new Subscription();
   private _AuthService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
+
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required],
   });
+
   get email() {
     return this.loginForm.get('email');
   }
+
   get password() {
     return this.loginForm.get('password');
   }
+
   login() {
+    if (this.loginForm.invalid) {
+      Swal.fire(
+        'Fill Form!',
+        'Please fill in all required fields with valid data.',
+        'warning'
+      );
+      return;
+    }
     let sub1 = this._AuthService
-      .loginUser(this.loginForm.value as unknown as User)
+      .loginUser(this.email?.value || '', this.password?.value || '')
       .subscribe({
         next: (res) => {
-          if ('token' in res) {
-            this._AuthService.login(res.token, res.user);
-          }
+          this._AuthService.isUserLoggedIn.next(true);
+          this._AuthService.userName.next(res.name);
+          this._AuthService.isAdmin.next(res.isAdmin || false);
+          Swal.fire('User login successfully', res.name, 'success');
+          this.router.navigate(['/home']); // Store the token and user in cookies
         },
         error: (err) => {
-          alert(err.error.message);
-          console.log(err.error.message);
+          Swal.fire('Error!', err.error.message, 'error');
         },
       });
-    this.subscribtion.add(sub1);
+    this.subscription.add(sub1);
   }
+
   hide = signal(true);
+
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
   }
+
   ngOnDestroy() {
-    this.subscribtion.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }

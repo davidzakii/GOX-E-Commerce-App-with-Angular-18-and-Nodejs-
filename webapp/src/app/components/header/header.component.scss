@@ -1,3 +1,16 @@
+.active {
+  // color: rgb(249 115 22 / 90%);
+  background-color: rgb(37 99 235 / 80%);
+}
+.hover-link:hover {
+  // border-top: 1px solid #d6d6d6;
+  // border-right: 1px solid #d6d6d6;
+  // border-left: 1px solid #d6d6d6;
+  border: 2px solid #d6d6d6;
+}
+.text-white {
+  color: #d6d6d6;
+}
 .rotate {
   transition: transform 0.5s;
   color: red;

@@ -9,6 +9,7 @@ import { Brand } from '../../../models/brand';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { BrandService } from '../../../services/brand.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-brands',
@@ -31,7 +32,20 @@ export class BrandsComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   constructor(private router: Router, private _BrandService: BrandService) {}
-
+  // showAlert() {
+  //   Swal.fire({
+  //     title: 'هل أنت متأكد؟',
+  //     text: 'لا يمكنك التراجع عن هذا الإجراء!',
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'نعم، احذف!',
+  //     cancelButtonText: 'إلغاء',
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       Swal.fire('تم الحذف!', 'تم حذف العنصر بنجاح.', 'success');
+  //     }
+  //   });
+  // }
   ngOnInit() {
     let sub = this._BrandService.getAllBrands().subscribe({
       next: (data) => {
@@ -59,20 +73,25 @@ export class BrandsComponent {
   goToEditBrandForm(_id: string) {
     this.router.navigate(['admin/brands/', _id]);
   }
-  deleteBrand(id: string) {
-    let adminConfirm = confirm(
-      'Are you sure you want to delete this category?'
-    );
-    if (!adminConfirm) return;
+  async deleteBrand(id: string): Promise<void> {
+    let adminConfirm = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+    if (!adminConfirm.isConfirmed) return;
     let sub = this._BrandService.deleteBrand(id).subscribe({
       next: (data) => {
         this.dataSource.data = this.dataSource.data.filter(
           (brand) => brand._id !== id
         );
-        alert(data.message);
+        Swal.fire('Deleted!', data.message, 'success');
       },
       error: (err) => {
-        alert('Error:' + err.error.message);
+        Swal.fire('Error!', err.error.message, 'error');
       },
     });
     this.subscribtion.add(sub);

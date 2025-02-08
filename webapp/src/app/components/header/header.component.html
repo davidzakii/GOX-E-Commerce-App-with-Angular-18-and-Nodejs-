@@ -1,12 +1,19 @@
-<header class="bg-black text-white">
+<header class="bg-gray-800 text-white">
   <div class="flex justify-between items-center h-20 p-4">
     <!-- Logo -->
-    <a class="text-2xl font-bold" routerLink="/home">
-      <img class="w-24 h-20" src="images/Logo/GOXLOGO.jpg" alt="Logo" />
+    <a
+      class="text-2xl font-bold hover-link flex justify-center items-center"
+      routerLink="/home"
+      routerLinkActive="active"
+    >
+      <img class="w-24 h-20 rounded-lg" src="images/Logo/GOX.png" alt="Logo" />
     </a>
 
     <!-- Search Bar -->
-    <mat-form-field appearance="fill" class="hidden md:block w-1/2 md:w-1/4">
+    <mat-form-field
+      appearance="fill"
+      class="hidden md:block w-1/2 md:w-1/4 mx-2"
+    >
       <mat-label>Search</mat-label>
       <input
         matInput
@@ -19,26 +26,30 @@
     <div class="flex items-center space-x-4">
       <mat-icon
         *ngIf="showIcon"
-        class="md:hidden cursor-pointer"
+        class="md:hidden cursor-pointer mx-2"
         (click)="toggleMenu()"
         >menu</mat-icon
       >
-      <div class="hidden md:flex items-center space-x-4">
+      <div class="hidden h-20 md:flex items-center justify-center space-x-4">
         <ng-container *ngIf="!isUserLoggedIn">
           <a
             Arrow
-            class="text-lg p-2"
+            class="text-lg p-2 hover-link h-full flex justify-center items-center p-2"
             routerLink="/login"
             routerLinkActive="active"
             >Log in</a
           >
-          <a class="text-lg" routerLink="/register" routerLinkActive="active"
+          <a
+            class="text-lg hover-link h-full p-2 flex justify-center items-center"
+            routerLink="/register"
+            routerLinkActive="active"
             >Register</a
           >
         </ng-container>
         <ng-container *ngIf="isUserLoggedIn">
           <a
-            class="text-lg cursor-pointer"
+            class="text-lg cursor-pointer hover-link h-full p-2 flex justify-center items-center"
+            routerLink="/profile"
             routerLinkActive="active"
             (click)="goToProfile()"
             >{{ userName }}</a
@@ -46,23 +57,44 @@
           <ng-container *ngIf="isAdmin">
             <a
               Arrow
-              class="text-lg"
+              class="text-lg hover-link h-full p-2 flex justify-center items-center"
               routerLink="/admin"
               routerLinkActive="active"
               >Dashboard</a
             >
           </ng-container>
-          <a routerLink="/wishList" routerLinkActive="active"
-            ><mat-icon class="text-red-500">favorite</mat-icon></a
+          <a
+            routerLink="/wishList"
+            routerLinkActive="active"
+            class="text-lg hover-link h-full p-2 flex justify-center items-center"
+            ><mat-icon class="text-red-500">favorite</mat-icon>
+          </a>
+          <a
+            routerLink="/cart"
+            routerLinkActive="active"
+            class="text-lg hover-link h-full p-2 flex justify-center items-center"
+            ><mat-icon class="text-white-500">shopping_cart</mat-icon
+            ><span>{{ countProductInCart }}</span>
+          </a>
+          <a
+            routerLink="/order"
+            routerLinkActive="active"
+            class="text-lg hover-link h-full p-2 flex justify-center items-center"
+            >Orders</a
           >
-          <button class="text-lg" (click)="logout()">Logout</button>
+          <button
+            class="text-lg hover-link h-full p-2 flex justify-center items-center"
+            (click)="logout()"
+          >
+            Logout
+          </button>
         </ng-container>
       </div>
     </div>
   </div>
 
   <!-- Mobile Menu -->
-  <div *ngIf="isMenuOpen" class="md:hidden bg-black text-white p-4">
+  <div *ngIf="isMenuOpen" class="md:hidden bg-gray-800 text-white p-4">
     <mat-form-field appearance="fill" class="w-full mb-4">
       <mat-label>Search</mat-label>
       <input
@@ -86,6 +118,7 @@
       <a
         class="block text-lg p-2 cursor-pointer"
         routerLinkActive="active"
+        routerLink="/profile"
         (click)="goToProfile()"
         >{{ userName }}</a
       >
@@ -97,9 +130,14 @@
           >Dashboard</a
         >
       </ng-container>
-      <a routerLink="/wishList" routerLinkActive="active"
+      <a routerLink="/wishList" routerLinkActive="active" class="block"
         ><mat-icon class="text-red-500">favorite</mat-icon></a
       >
+      <a routerLink="/cart" routerLinkActive="active" class="block"
+        ><mat-icon class="text-white-500">shopping_cart</mat-icon
+        ><span>{{ countProductInCart }}</span>
+      </a>
+      <a routerLink="/order" routerLinkActive="active" class="block">Orders</a>
       <button class="block text-lg p-2" (click)="logout()">Logout</button>
     </ng-container>
   </div>

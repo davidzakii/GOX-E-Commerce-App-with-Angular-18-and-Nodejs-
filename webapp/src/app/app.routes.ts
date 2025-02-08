@@ -20,6 +20,10 @@ import { AdminloginComponent } from './components/adminlogin/adminlogin.componen
 import { afteradminloginGuard } from './guards/afteradminlogin.guard';
 import { ProfileComponent } from './components/profile/profile.component';
 import { WishListComponent } from './components/wish-list/wish-list.component';
+import { ShoppingCartComponent } from './components/shopping-cart/shopping-cart.component';
+import { CustomerOrdersComponent } from './components/customer-orders/customer-orders.component';
+import { OrdersComponent } from './components/manage/orders/orders.component';
+import { UpdateOrderComponent } from './components/manage/update-order/update-order.component';
 export const routes: Routes = [
   {
     path: '',
@@ -27,22 +31,6 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
-      {
-        path: 'admin',
-        canActivate: [isAdminGuard],
-        children: [
-          { path: '', component: AdminDashboardComponent },
-          { path: 'categories', component: CategoryComponent },
-          { path: 'categories/add', component: CategoryFormComponent },
-          { path: 'categories/:id', component: CategoryFormComponent },
-          { path: 'brands', component: BrandsComponent },
-          { path: 'brands/add', component: BrandFormComponent },
-          { path: 'brands/:id', component: BrandFormComponent },
-          { path: 'products', component: ProductsComponent },
-          { path: 'products/add', component: ProductFormComponent },
-          { path: 'products/:id', component: ProductFormComponent },
-        ],
-      },
       { path: 'products', component: ProductListComponent },
       { path: 'products/:id', component: ProductDetailsComponent },
       {
@@ -53,6 +41,16 @@ export const routes: Routes = [
       {
         path: 'wishList',
         component: WishListComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'cart',
+        component: ShoppingCartComponent,
+        canActivate: [authGuard],
+      },
+      {
+        path: 'order',
+        component: CustomerOrdersComponent,
         canActivate: [authGuard],
       },
       {
@@ -70,6 +68,25 @@ export const routes: Routes = [
         component: AdminloginComponent,
         canActivate: [afteradminloginGuard],
       },
+    ],
+  },
+  {
+    path: 'admin',
+    component: AdminDashboardComponent,
+    canActivate: [isAdminGuard],
+    children: [
+      { path: '', redirectTo: 'products', pathMatch: 'full' },
+      { path: 'categories', component: CategoryComponent },
+      { path: 'categories/add', component: CategoryFormComponent },
+      { path: 'categories/:id', component: CategoryFormComponent },
+      { path: 'brands', component: BrandsComponent },
+      { path: 'brands/add', component: BrandFormComponent },
+      { path: 'brands/:id', component: BrandFormComponent },
+      { path: 'products', component: ProductsComponent },
+      { path: 'products/add', component: ProductFormComponent },
+      { path: 'products/:id', component: ProductFormComponent },
+      { path: 'orders', component: OrdersComponent },
+      { path: 'orders/:id', component: UpdateOrderComponent },
     ],
   },
   { path: '**', component: NotFoundPageComponent },

@@ -14,16 +14,16 @@ import { Product } from '../../models/product';
 export class WishListComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
   private WishListService = inject(WishListService);
-  products: Product[] = [];
+  productInWishList: Product[] = this.WishListService.productsInWishList.value;
   ngOnInit() {
-    let sub = this.WishListService.getWishList().subscribe({
-      next: (res) => {
-        let sub = this.WishListService.init();
-        this.products = res.products.map((product) => product.productId);
-        this.subscription.add(sub);
+    const sub = this.WishListService.productInWishListAsObservable().subscribe({
+      next: (products) => {
+        this.productInWishList = products;
       },
     });
+    let sub2 = this.WishListService.init();
     this.subscription.add(sub);
+    this.subscription.add(sub2);
   }
 
   ngOnDestroy(): void {

@@ -5,6 +5,7 @@ import { Product } from '../models/product';
 import { environment } from '../../environments/environment.development';
 import { Category } from '../models/category';
 import { Brand } from '../models/brand';
+import { PReview } from '../viewmodel/preview';
 
 @Injectable({
   providedIn: 'root',
@@ -45,6 +46,23 @@ export class CustomerService {
   getProductById(id: string): Observable<Product> {
     return this.http.get<Product>(
       `${environment.baseURL}/customer/products/${id}`
+    );
+  }
+  addProductReviews(review: PReview, productId: string): Observable<PReview[]> {
+    return this.http.post<PReview[]>(
+      `${environment.baseURL}/customer/${productId}/reviews`,
+      review
+    );
+  }
+
+  getProductRating(productId: string): Observable<{ totalRating: number }> {
+    return this.http.get<{ totalRating: number }>(
+      `${environment.baseURL}/customer/product/${productId}/rating`
+    );
+  }
+  getReviews(productId: string): Observable<PReview[]> {
+    return this.http.get<PReview[]>(
+      `${environment.baseURL}/customer/${productId}/reviews`
     );
   }
   search(

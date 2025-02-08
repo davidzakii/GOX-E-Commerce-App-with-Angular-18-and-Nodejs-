@@ -1,7 +1,89 @@
-<div class="flex flex-wrap justify-around h-screen mt-20">
-  <button mat-raised-button routerLink="/admin/categories">
-    Manage Category
-  </button>
-  <button mat-raised-button routerLink="/admin/products">Manage Product</button>
-  <button mat-raised-button routerLink="/admin/brands">Manage Brand</button>
+<header
+  class="flex items-center justify-between bg-blue-500 text-white p-4 shadow-md"
+>
+  <div class="flex items-center space-x-2">
+    <a routerLink="/admin" class="flex items-center space-x-2">
+      <mat-icon>dashboard</mat-icon>
+      <span class="text-lg font-bold">Admin Dashboard</span>
+    </a>
+  </div>
+
+  <nav class="hidden md:flex space-x-4">
+    <a
+      routerLink="/admin/products"
+      routerLinkActive="active"
+      class="hover:underline"
+      >Manage Product</a
+    >
+    <a
+      routerLink="/admin/categories"
+      routerLinkActive="active"
+      class="hover:underline"
+      >Manage Category</a
+    >
+    <a
+      routerLink="/admin/brands"
+      routerLinkActive="active"
+      class="hover:underline"
+      >Manage Brand</a
+    >
+    <a
+      routerLink="/admin/orders"
+      routerLinkActive="active"
+      class="hover:underline"
+      >Manage Orders</a
+    >
+  </nav>
+
+  <div class="flex items-center space-x-4">
+    <a
+      routerLink="/home"
+      class="hover:underline"
+      #tooltip="matTooltip"
+      matTooltip="Go To Home"
+      ><mat-icon class="cursor-pointer">home</mat-icon></a
+    >
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item>Profile</button>
+      <button mat-menu-item>Logout</button>
+    </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </div>
+  <div class="md:hidden">
+    <button mat-icon-button (click)="toggleMobileMenu()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+</header>
+
+@if ( isMobileMenuOpen ) {
+<div class="bg-blue-600 text-white md:hidden">
+  <a routerLink="/admin/products" class="block px-4 py-2 hover:bg-blue-700"
+    >Manage Product</a
+  >
+  <a routerLink="/admin/categories" class="block px-4 py-2 hover:bg-blue-700"
+    >Manage Category</a
+  >
+  <a routerLink="/admin/brands" class="block px-4 py-2 hover:bg-blue-700"
+    >Manage Brand</a
+  >
+  <a routerLink="/admin/orders" class="block px-4 py-2 hover:bg-blue-700"
+    >Manage Orders</a
+  >
 </div>
+}
+<div
+  *ngIf="loading$ | async"
+  class="loader-overlay p-5 flex justify-center items-center"
+>
+  <!-- <mat-progress-spinner
+    color="accent"
+    mode="indeterminate"
+  ></mat-progress-spinner> -->
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+<router-outlet></router-outlet>
+
+<app-footer></app-footer>

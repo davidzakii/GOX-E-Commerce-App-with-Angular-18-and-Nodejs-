@@ -1,0 +1,146 @@
+<div class="mt-10 mb-10">
+  <div class="flex media-col-730 justify-between items-center">
+    <h1 class="text-2xl font-bold">Manage Orders</h1>
+  </div>
+  <div class="shadow flex flex-col justify-center input mat-elevation-z8">
+    <mat-form-field class="mat-form-field" class="w-full">
+      <mat-label>Filter</mat-label>
+      <input
+        class="input"
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Search"
+        #input
+      />
+    </mat-form-field>
+
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      class="mat-table-responsive"
+    >
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let row">{{ row._id }}</td>
+      </ng-container>
+      <!-- userId Column -->
+      <ng-container matColumnDef="userName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>User Name</th>
+        <td mat-cell *matCellDef="let row">{{ row.userId.name }}</td>
+      </ng-container>
+
+      <!-- items Column -->
+      <ng-container matColumnDef="items">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Items</th>
+        <td mat-cell *matCellDef="let row">
+          @for (item of row.items; track $index) {
+          <p>{{ item.productId.name }}</p>
+          <p>{{ item.productId.price }}</p>
+          <p>{{ item.quantity }}</p>
+          }
+        </td>
+      </ng-container>
+
+      <!-- address: {
+        address1: string;
+        address2?: string;
+        phoneNumber: string;
+        city: string;
+        postalCode: number;
+      };
+      totalAmount: number;
+      paymentType: string;
+      status?: string;
+      isPaid?: boolean;
+      createdAt?: Date;
+      updatedAt?: Date; -->
+      <!-- address Column -->
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+        <td mat-cell *matCellDef="let row">
+          <p>{{ row.address.address1 }}</p>
+        </td>
+      </ng-container>
+      <!-- totalAmount Column -->
+      <ng-container matColumnDef="totalAmount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Amount</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.totalAmount }}
+        </td>
+      </ng-container>
+      <!-- paymentType Column -->
+      <ng-container matColumnDef="paymentType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>paymentType</th>
+        <td mat-cell *matCellDef="let row">{{ row.paymentType }}</td>
+      </ng-container>
+      <!-- status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.status }}
+        </td>
+      </ng-container>
+
+      <!-- Paid Column -->
+      <ng-container matColumnDef="isPaid">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>IsPaid</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.isPaid }}
+        </td>
+      </ng-container>
+
+      <!-- createdAt -->
+      <ng-container matColumnDef="createdAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>CreatedAt</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.createdAt }}
+        </td>
+      </ng-container>
+      <!-- Paid Column -->
+      <ng-container matColumnDef="updatedAt">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>UpdatedAt</th>
+        <td mat-cell *matCellDef="let row">
+          {{ row.updatedAt }}
+        </td>
+      </ng-container>
+
+      <!-- Fruit Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+        <td mat-cell *matCellDef="let row">
+          <div class="flex">
+            <a
+              (click)="goToEditOrder(row._id)"
+              mat-raised-button
+              color="accent"
+              #tooltip="matTooltip"
+              matTooltip="Go To Order Details"
+            >
+              <mat-icon class="cursor-pointer">info</mat-icon>
+            </a>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr
+        class="mat-header-row"
+        mat-header-row
+        *matHeaderRowDef="displayedColumns"
+      ></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr *matNoDataRow>
+        <td colspan="4">No data matching the filter "{{ input.value }}"</td>
+      </tr>
+    </table>
+
+    <mat-paginator
+      class="mat-paginator"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      aria-label="Select"
+    ></mat-paginator>
+  </div>
+</div>

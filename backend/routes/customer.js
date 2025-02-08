@@ -4,14 +4,19 @@ import {
   getNewProduct,
   getProductById,
   getProductForListing,
+  getProductReviews,
+  addProductReviews,
   getProducts,
   getProductsByCategoryId,
+  getProductReviewsUser,
 } from '../handlers/product-handler.js';
 import {
   getCategories,
   getCategoryById,
 } from '../handlers/category.handler.js';
 import { getBrandById, getBrands } from '../handlers/brand-handler.js';
+import { verifyToken } from '../middleware/auth-middleware.js';
+import { getCustomerOrders } from '../handlers/order-handler.js';
 
 const router = express.Router();
 
@@ -81,6 +86,52 @@ router.get('/product', async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({ message: 'Error retriving products', error });
+  }
+});
+router.get('/order', verifyToken, async (req, res) => {
+  try {
+    const orders = await getCustomerOrders(req.user.id);
+    res.status(201).send(orders);
+  } catch (err) {
+    res.status(500).send({ error: 'Failed to retrive orders' });
+  }
+});
+router.post('/:productId/reviews', verifyToken, async (req, res) => {
+  try {
+    const product = await addProductReviews(
+      req.user.id,
+      req.params.productId,
+      req.body
+    );
+    if (product) {
+      res.status(201).send(product.reviews);
+    } else {
+      res.status(404).send('Product not found');
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Error rating this product', error });
+  }
+});
+
+router.get('/product/:productId/rating', async (req, res) => {
+  try {
+    const productsWithRatings = await getProductReviews(req.params.productId);
+    res.status(200).send({ totalRating: productsWithRatings });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+router.get('/:productId/reviews', async (req, res) => {
+  try {
+    const reviews = await getProductReviewsUser(req.params.productId);
+    if (reviews) {
+      res.status(200).send(reviews);
+    } else {
+      res.status(404).send({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Error getting users', error });
   }
 });
 

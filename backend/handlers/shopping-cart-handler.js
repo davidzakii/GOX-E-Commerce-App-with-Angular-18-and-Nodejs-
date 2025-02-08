@@ -1,5 +1,6 @@
 import { Cart } from '../db/cart.js';
 import Joi from 'joi';
+import { getProductById } from './product-handler.js';
 const userIdSchema = Joi.string()
   .regex(/^[0-9a-fA-F]{24}$/)
   .required();
@@ -12,9 +13,22 @@ export async function addToCart(userId, productId, quantity) {
   const { productIdError } = productIdSchema.validate(productId);
   if (productIdError) throw new Error('Invalid product ID');
   const cart = await Cart.findOne({ userId, productId });
+  const product = await getProductById(productId);
   if (cart) {
-    cart.count += quantity;
+    if (quantity > 0) {
+      if (cart.count + quantity > product.quantity) {
+        return null;
+      }
+      cart.count += quantity;
+    } else if (quantity < 0) {
+      if (cart.count + quantity <= 0) {
+        await Cart.findByIdAndDelete(cart._id);
+        return '';
+      }
+      cart.count += quantity;
+    }
     await cart.save();
+    return cart;
   } else {
     const newCart = new Cart({
       userId,
@@ -22,6 +36,7 @@ export async function addToCart(userId, productId, quantity) {
       count: quantity,
     });
     await newCart.save();
+    return newCart;
   }
 }
 export async function removeFromCart(userId, productId) {
@@ -31,9 +46,7 @@ export async function removeFromCart(userId, productId) {
   if (productIdError) throw new Error('Invalid product ID');
   const cart = await Cart.findOne({ userId, productId });
   if (cart) {
-    if (cart.count > 1) cart.count -= 1;
-    else await Cart.findByIdAndDelete(cart._id);
-    await cart.save();
+    await Cart.findByIdAndDelete(cart._id);
   } else {
     throw new Error('Cart is not exist');
   }
@@ -45,5 +58,11 @@ export async function getCartItems(userId) {
   const carts = await Cart.find({ userId }).populate('productId');
   return carts.map((cart) => {
     return { count: cart.count, product: cart.productId };
+  });
+}
+
+export async function clearCart(userId) {
+  await Cart.deleteMany({
+    userId,
   });
 }

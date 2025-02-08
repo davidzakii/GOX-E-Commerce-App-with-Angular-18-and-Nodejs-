@@ -1,10 +1,15 @@
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center p-4">
   @if(id){
   <h1>Update Product</h1>
   }@else {
   <h1>Add New Product</h1>
   }
-  <form class="p-4 shadow-2xl w-2/3 mb-10" [formGroup]="productForm">
+  <form
+    class="p-4 shadow-2xl w-2/3 mb-10"
+    enctype="multipart/form-data"
+    method="post"
+    [formGroup]="productForm"
+  >
     <div class="flex flex-wrap w-full">
       <div class="w-full gap-4">
         <mat-form-field appearance="fill" class="w-full">
@@ -86,6 +91,22 @@
           } }
         </mat-form-field>
         <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Product Quantity</mat-label>
+          <input
+            formControlName="quantity"
+            name="quantity"
+            matInput
+            type="text"
+            placeholder="Product Quantity"
+          />
+          @if(quantity?.invalid && (quantity?.dirty || quantity?.touched)){
+          @if(quantity?.errors?.['required']){
+          <mat-error>this field is required</mat-error>
+          } @if(quantity?.errors?.['pattern']){
+          <mat-error>It must be only number.</mat-error>
+          } }
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="w-full">
           <mat-label>Product Price</mat-label>
           <input
             formControlName="price"
@@ -121,35 +142,78 @@
           <mat-checkbox formControlName="isFeatured">Is Featured</mat-checkbox>
           <mat-checkbox formControlName="isNewProduct">Is New</mat-checkbox>
         </div>
+        @if(id){
+        <div class="flex gap-4 my-4">
+          @for (image of product.images; track $index) {
+          <img
+            [src]="baseURL + image"
+            alt="Product Image"
+            class="w-20 h-20 object-cover"
+          />
+          }
+        </div>
         <div class="w-full flex flex-col" formArrayName="images">
           <div class="flex justify-between">
             <h4>Images</h4>
-            <button mat-raised-button color="primary" (click)="addImage()">
-              Add Image
-            </button>
             <button
-              #btnRemoveImage
-              [disabled]="btnRemoveImageDisabled"
+              [disabled]="images.controls.length >= 5"
               mat-raised-button
               color="primary"
-              (click)="removeImage()"
+              (click)="addImage()"
             >
-              removeImage
+              Add Image
+            </button>
+            <button mat-flat-button color="accent" (click)="showUpdateNote()">
+              Notes
             </button>
           </div>
-          @for (image of images.controls; track $index) {
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label> Image {{ $index + 1 }} </mat-label>
-            <input matInput type="text" formControlName="{{ $index }}" />
-            @if(image?.invalid && (image?.dirty || image?.touched)){
-            @if(image?.errors?.['required']){
-            <mat-error>this field is required</mat-error>
-            } @if(image?.errors?.['minlength']){
-            <mat-error>It must be at least 5 characters.</mat-error>
-            } }
-          </mat-form-field>
+          @for (image of images.controls;let i = $index; track $index) {
+          <div class="flex items-center gap-4">
+            <input
+              type="file"
+              accept="image/*"
+              formControlName="{{ i }}"
+              name="images"
+              (change)="onImagesSelected($event)"
+            />
+            <button mat-icon-button color="warn" (click)="removeImage(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
           }
         </div>
+        }@else {
+        <div class="w-full flex flex-col" formArrayName="images">
+          <div class="flex justify-between">
+            <h4>Images</h4>
+            <button
+              [disabled]="images.controls.length >= 5"
+              mat-raised-button
+              color="primary"
+              (click)="addImage()"
+            >
+              Add Image
+            </button>
+            <button mat-flat-button color="accent" (click)="showAddNote()">
+              Notes
+            </button>
+          </div>
+          @for (image of images.controls; let i = $index; track $index) {
+          <div class="flex items-center gap-4">
+            <input
+              type="file"
+              accept="image/*"
+              formControlName="{{ i }}"
+              name="images"
+              (change)="onImagesSelected($event)"
+            />
+            <button mat-icon-button color="warn" (click)="removeImage(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          }
+        </div>
+        }
       </div>
       <div class="w-full flex justify-center">
         @if(id){

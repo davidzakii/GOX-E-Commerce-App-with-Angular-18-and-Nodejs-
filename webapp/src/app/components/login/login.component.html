@@ -1,15 +1,14 @@
-<div class="flex justify-center mb-5 mt-5 h-screen">
+<div class="flex justify-center">
   <div
-    class="flex justify-around items-center flex-col bg-blue-600 p-4 text-white"
+    class="hidden sm:flex justify-around items-center flex-col bg-blue-600 p-4 text-white"
   >
     <div>
       <h1>Login</h1>
       <p>Get access to your Orders, Wishlist and Recommendations</p>
     </div>
-
     <img src="images/404 page image/error-404_f9bbb4.png" alt="" />
   </div>
-  <form class="flex flex-col shadow p-6" [formGroup]="loginForm">
+  <form class="flex flex-col shadow-2xl p-6 sm:shadow" [formGroup]="loginForm">
     <div class="flex flex-wrap w-full">
       <div class="w-full gap-4">
         <mat-form-field appearance="fill" class="w-full">

@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -19,6 +20,11 @@ import { Category } from '../../../models/category';
 import { Brand } from '../../../models/brand';
 import { CategoryService } from '../../../services/category.service';
 import { BrandService } from '../../../services/brand.service';
+import { environment } from '../../../../environments/environment.development';
+import { MatIconModule } from '@angular/material/icon';
+import Swal from 'sweetalert2';
+// import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+// import { ProductFormComponent } from '../product-form/product-form.component';
 
 @Component({
   selector: 'app-products',
@@ -30,24 +36,38 @@ import { BrandService } from '../../../services/brand.service';
     MatSortModule,
     MatPaginatorModule,
     MatButtonModule,
+    MatIconModule,
+    // MatDialogModule,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss',
 })
 export class ProductsComponent implements OnInit, AfterViewInit, OnDestroy {
+  // readonly dialog = inject(MatDialog);
+  // openDialog() {
+  //   const dialogRef = this.dialog.open(ProductFormComponent);
+  //   dialogRef.afterClosed().subscribe((result) => {
+  //     console.log(`Dialog result: ${result}`);
+  //   });
+  // }
   displayedColumns: string[] = [
     'id',
     'name',
     'shortDescription',
     'price',
     'discount',
+    'quantity',
     'images',
     'categoryId',
     'brandId',
     'action',
   ];
+  baseURL = environment.baseURL;
+  isPopupVisible: boolean = false;
   categories: Category[] = [];
   brands: Brand[] = [];
+  images: string[] = [];
   dataSource = new MatTableDataSource<Product>();
   private subscribtion: Subscription = new Subscription();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -58,6 +78,16 @@ export class ProductsComponent implements OnInit, AfterViewInit, OnDestroy {
     private categoryService: CategoryService,
     private brandService: BrandService
   ) {}
+
+  showImagesPopup(images: string[]): void {
+    this.images = images;
+    this.isPopupVisible = true;
+  }
+
+  closePopup(): void {
+    this.isPopupVisible = false;
+    this.images = [];
+  }
 
   ngOnInit() {
     let sub = this._ProductService.getProducts().subscribe({
@@ -70,7 +100,7 @@ export class ProductsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.categories = categories;
       },
       error: (err) => {
-        alert(err.error.message);
+        Swal.fire('Error!', err.error.message, 'error');
       },
     });
     let sub3 = this.brandService.getAllBrands().subscribe({
@@ -78,7 +108,7 @@ export class ProductsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.brands = brands;
       },
       error: (err) => {
-        alert(err.error.message);
+        Swal.fire('Error!', err.error.message, 'error');
       },
     });
     this.subscribtion.add(sub);
@@ -99,25 +129,31 @@ export class ProductsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   goToAddProductForm() {
+    // this.openDialog();
     this.router.navigate(['admin/products/add']);
   }
   goToEditProductForm(_id: string) {
     this.router.navigate(['admin/products/', _id]);
   }
-  deleteProduct(id: string) {
-    let adminConfirm = confirm(
-      'Are you sure you want to delete this category?'
-    );
-    if (!adminConfirm) return;
+  async deleteProduct(id: string): Promise<void> {
+    let adminConfirm = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+    if (!adminConfirm.isConfirmed) return;
     let sub = this._ProductService.deleteProduct(id).subscribe({
       next: (data) => {
         this.dataSource.data = this.dataSource.data.filter(
           (category) => category._id !== id
         );
-        alert(data.message);
+        Swal.fire('Deleted!', data.message, 'success');
       },
       error: (err) => {
-        alert('Error:' + err.error.message);
+        Swal.fire('Error!', err.error.message, 'error');
       },
     });
     this.subscribtion.add(sub);

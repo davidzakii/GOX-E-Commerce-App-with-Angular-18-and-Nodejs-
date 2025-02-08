@@ -1,13 +1,13 @@
 <div class="px-10 mb-4">
-  <div class="shadow">
+  <div class="shadow carousel-container">
     <owl-carousel-o [options]="customOptions">
       @for(item of bannerImages;track $index){
-      <ng-template carouselSlide>
+      <ng-template carouselSlide class="h-1/2">
         <div
-          class="relative flex flex-col items-center"
+          class="relative flex flex-col items-center slide-item"
           [routerLink]="'/products/' + item._id"
         >
-          <img [src]="item.images[0]" [alt]="item.name" />
+          <img [src]="baseURL + item.images[0]" [alt]="item.name" />
           <span>{{ item.name }}</span>
         </div>
       </ng-template>

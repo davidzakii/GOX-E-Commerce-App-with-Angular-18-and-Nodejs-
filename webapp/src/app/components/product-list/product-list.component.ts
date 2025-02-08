@@ -10,6 +10,7 @@ import { Category } from '../../models/category';
 import { Brand } from '../../models/brand';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-product-list',
@@ -105,17 +106,23 @@ export class ProductListComponent implements OnInit, OnDestroy {
           this.isNextPage = products.length < this.pageSize;
         },
         error: (err) => {
-          alert(err.error.message);
+          Swal.fire('Error!', err.error.message, 'error');
         },
       });
     let sub1 = this.customerService.getCategories().subscribe({
       next: (categories) => {
         this.categories = categories;
       },
+      error: (err) => {
+        Swal.fire('Error!', err.error.message, 'error');
+      },
     });
     let sub2 = this.customerService.getBrands().subscribe({
       next: (brands) => {
         this.brands = brands;
+      },
+      error: (err) => {
+        Swal.fire('Error!', err.error.message, 'error');
       },
     });
     this.subscription.add(sub1);

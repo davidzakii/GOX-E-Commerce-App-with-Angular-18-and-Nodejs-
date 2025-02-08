@@ -1,0 +1,86 @@
+// /* Container Styling */
+// .review-form-container {
+//   max-width: 600px;
+//   margin: 2rem auto;
+//   padding: 1.5rem;
+//   background-color: #f9fafb;
+//   border-radius: 8px;
+//   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+// }
+
+// /* Form Layout */
+// .form {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 1.5rem;
+// }
+
+// /* Remove mat-form-field borders and background */
+// .mat-form-field-appearance-outline {
+//   border: none;
+//   background-color: transparent;
+// }
+
+// .mat-form-field-appearance-outline .mat-form-field-outline {
+//   display: none; /* Remove the outline completely */
+// }
+
+// .mat-form-field-wrapper {
+//   padding: 0; /* Remove unnecessary padding */
+// }
+
+// /* Custom Input and Textarea Styling */
+// textarea.mat-input-element,
+// input.mat-input-element {
+//   border: 1px solid #ccc; /* Add custom border */
+//   border-radius: 4px; /* Add rounded corners */
+//   padding: 0.5rem;
+//   font-size: 1rem;
+//   font-family: inherit;
+//   background-color: #fff; /* Ensure consistent background */
+//   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+// }
+
+// textarea.mat-input-element:focus,
+// input.mat-input-element:focus {
+//   border-color: #3b82f6; /* Blue border on focus */
+//   box-shadow: 0 0 4px rgba(59, 130, 246, 0.5); /* Subtle shadow on focus */
+//   outline: none;
+// }
+
+// /* Select Field Customization */
+// .mat-select-trigger {
+//   padding: 0.5rem;
+//   font-size: 1rem;
+//   font-family: inherit;
+// }
+
+// .mat-select {
+//   border: 1px solid #ccc; /* Add border to select dropdown */
+//   border-radius: 4px;
+//   transition: border-color 0.3s ease;
+// }
+
+// .mat-select:focus {
+//   border-color: #3b82f6;
+//   box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+//   outline: none;
+// }
+
+// /* Button Styling */
+// .form-button {
+//   width: 100%;
+//   padding: 0.75rem;
+//   font-size: 1rem;
+//   font-weight: bold;
+//   text-transform: uppercase;
+//   background-color: #3b82f6;
+//   color: #fff;
+//   border-radius: 4px;
+//   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+// }
+
+// .form-button:disabled {
+//   background-color: #ccc;
+//   cursor: not-allowed;
+// }

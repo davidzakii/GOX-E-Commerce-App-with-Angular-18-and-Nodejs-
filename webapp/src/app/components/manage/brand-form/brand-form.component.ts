@@ -1,11 +1,12 @@
 import { Component, inject } from '@angular/core';
-import { map, Observable, Subscription, switchMap } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { BrandService } from '../../../services/brand.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-brand-form',
@@ -21,7 +22,6 @@ export class BrandFormComponent {
   private _BrandService = inject(BrandService);
   private _ActivatedRoute = inject(ActivatedRoute);
   private _Router = inject(Router);
-  constructor() {}
 
   ngOnInit() {
     let sub = this._ActivatedRoute.params.subscribe({
@@ -75,27 +75,31 @@ export class BrandFormComponent {
     if (brandForm.valid && this.id == undefined) {
       let sub = this._BrandService.addNewBrand(newCategory).subscribe({
         next: (data) => {
-          alert(JSON.stringify(data) + ' Brand added successfully');
+          Swal.fire('Added!', JSON.stringify(data), 'success');
           this._Router.navigate(['/admin/brands']);
         },
         error: (err) => {
-          alert('Error:' + JSON.stringify(err.error.message));
+          Swal.fire('Error!', err.error.message, 'error');
         },
       });
       this.subscribtion.add(sub);
     } else if (brandForm.valid && this.id != undefined) {
       let sub = this._BrandService.updateBrand(newCategory, this.id).subscribe({
         next: (data) => {
-          alert(data.message);
+          Swal.fire('Updated!', data.message, 'success');
           this._Router.navigate(['/admin/brands']);
         },
         error: (err) => {
-          alert('Error:' + JSON.stringify(err.error.message));
+          Swal.fire('Error!', err.error.message, 'error');
         },
       });
       this.subscribtion.add(sub);
     } else {
-      alert('Please fill all the fields correctly');
+      Swal.fire(
+        'Please be focus for fields!',
+        'Please fill all the fields correctly',
+        'success'
+      );
     }
   }
 

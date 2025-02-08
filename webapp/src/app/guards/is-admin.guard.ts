@@ -5,7 +5,8 @@ import { AuthService } from '../services/auth.service';
 export const isAdminGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const _AuthService = inject(AuthService);
-  if (_AuthService.isAdmin) {
+  let isAdmin: boolean = _AuthService.isAdminValue;
+  if (isAdmin) {
     return true;
   } else {
     router.navigate(['/admin/login']);

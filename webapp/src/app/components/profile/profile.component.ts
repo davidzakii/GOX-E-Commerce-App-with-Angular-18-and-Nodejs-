@@ -20,7 +20,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     let sub = this.activatedRoute.params.subscribe({
       next: (param) => {
         this.userName = param['username'];
-        if (this.userName !== this.authService.userName.split(' ').join('.')) {
+        if (
+          this.userName !== this.authService.userName.value.split(' ').join('.')
+        ) {
           this.router.navigate(['/NotFoundPage']);
         }
       },

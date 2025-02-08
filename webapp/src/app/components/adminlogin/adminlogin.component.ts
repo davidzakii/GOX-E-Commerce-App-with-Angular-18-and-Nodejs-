@@ -11,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { User } from '../../models/user';
 import { Subscription } from 'rxjs';
 
@@ -33,6 +33,7 @@ import { Subscription } from 'rxjs';
 export class AdminloginComponent implements OnDestroy {
   private subscribtion: Subscription = new Subscription();
   private _AuthService = inject(AuthService);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -46,12 +47,11 @@ export class AdminloginComponent implements OnDestroy {
   }
   login() {
     let sub1 = this._AuthService
-      .loginUser(this.loginForm.value as unknown as User)
+      .loginUser(this.email?.value || '', this.password?.value || '')
       .subscribe({
         next: (res) => {
-          if ('token' in res) {
-            this._AuthService.login(res.token, res.user);
-          }
+          this._AuthService.isUserLoggedIn.next(true);
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           alert(err.error.message);

@@ -15,6 +15,7 @@ import { Category } from '../../../models/category';
 import { MatButtonModule } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-category',
@@ -33,7 +34,7 @@ import { Subscription } from 'rxjs';
 export class CategoryComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns: string[] = ['id', 'name', 'action'];
   dataSource = new MatTableDataSource<Category>();
-  private subscribtion: Subscription= new Subscription();
+  private subscribtion: Subscription = new Subscription();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   constructor(
@@ -68,25 +69,30 @@ export class CategoryComponent implements OnInit, AfterViewInit, OnDestroy {
   goToEditCategoryForm(_id: string) {
     this.router.navigate(['admin/categories/', _id]);
   }
-  deleteCategory(id: string) {
-    let adminConfirm = confirm(
-      'Are you sure you want to delete this category?'
-    );
-    if (!adminConfirm) return;
+  async deleteCategory(id: string): Promise<void> {
+    let adminConfirm = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    });
+    if (!adminConfirm.isConfirmed) return;
     let sub = this._CategoryService.deleteCategory(id).subscribe({
       next: (data) => {
         this.dataSource.data = this.dataSource.data.filter(
           (category) => category._id !== id
         );
-        alert(data.message);
+        Swal.fire('Deleted!', data.message, 'success');
       },
       error: (err) => {
-        alert('Error:' + err.error.message);
+        Swal.fire('Error!', err.error.message, 'error');
       },
     });
     this.subscribtion.add(sub);
   }
   ngOnDestroy() {
-    this.subscribtion.unsubscribe()
+    this.subscribtion.unsubscribe();
   }
 }

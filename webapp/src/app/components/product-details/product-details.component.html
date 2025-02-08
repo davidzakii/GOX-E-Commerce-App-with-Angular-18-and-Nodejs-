@@ -2,25 +2,27 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <!-- Product Gallery -->
     <div>
-      <div class="shadow-lg mb-2 rounded-lg overflow-hidden">
+      <div class="shadow-lg mb-2 rounded-lg overflow-hidden mx-h-">
         <div class="flex flex-col md:flex-row justify-between p-4">
           <div class="hidden md:block w-full md:w-3/12">
             <div class="grid grid-cols-1 gap-2">
-              <div *ngFor="let url of product.images; let i = index">
-                <img
-                  class="w-full cursor-pointer object-cover rounded-lg hover:border-2 hover:border-blue-500"
-                  [src]="url"
-                  [alt]="product.name"
-                  (mouseover)="changeImage(url)"
-                />
-              </div>
+              <ng-container *ngFor="let url of product.images; let i = index">
+                <div>
+                  <img
+                    class="cursor-pointer object-cover rounded-lg hover:border-2 hover:border-blue-500"
+                    [src]="baseURL + url"
+                    [alt]="product.name"
+                    (mouseover)="changeImage(url)"
+                  />
+                </div>
+              </ng-container>
             </div>
           </div>
           <div class="w-full">
             <img
               style="width: 100%"
-              class="w-full h-full mx-2 md:w-9/12 object-cover rounded-lg shadow-md"
-              [src]="mainImage"
+              class="mx-2 w-9/12 md:w-full object-cover rounded-lg shadow-md"
+              [src]="baseURL + mainImage"
               alt="{{ product.name }}"
             />
           </div>
@@ -64,12 +66,12 @@
         </p>
         <div class="flex flex-wrap gap-4">
           <button
-            mat-flat-button
+            mat-raised-button
             color="accent"
             class="flex items-center"
-            (click)="addToWishList(); $event.stopPropagation()"
+            (click)="addToWishList()"
           >
-            @if(isInWishList()){
+            @if(isInWishList){
             <ng-container>
               <mat-icon class="text-red-500">favorite</mat-icon>
               <span> Remove From Wishlist</span>
@@ -81,7 +83,19 @@
             </ng-container>
             }
           </button>
-          <button mat-flat-button color="primary">Add to cart</button>
+          <button mat-raised-button color="primary" (click)="addToCart()">
+            @if(isInCart){
+            <ng-container>
+              <mat-icon>remove_shopping_cart</mat-icon>
+              Remove From Cart
+            </ng-container>
+            }@else {
+            <ng-container>
+              <mat-icon>add_shopping_cart</mat-icon>
+              Add to cart
+            </ng-container>
+            }
+          </button>
         </div>
 
         <!-- <p><strong>Stock:</strong> {{ product.stock }}</p> -->
@@ -89,19 +103,96 @@
     </div>
   </div>
   <!-- Product Reviews -->
-  <div>
-    <div>
-      <h2 class="text-xl font-bold">Product Reviews</h2>
-    </div>
+  <div class="shadow-lg p-4 my-4">
+    <h2 class="text-xl font-bold">Product Reviews</h2>
     <div class="p-4">
-      <div *ngFor="let review of product.reviews; let i = index">
-        <div>
-          <p>
-            <strong>{{ review.rating }}</strong>
-          </p>
+      <div *ngIf="reviews.length; else noReviews">
+        <div
+          *ngFor="let review of reviews"
+          class="border-b shadow p-2 mb-4 pb-2"
+        >
+          <h5>{{ review.userId?.name }}</h5>
+          <div class="flex items-center mb-2">
+            <mat-icon
+              color="yellow"
+              *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
+              [ngClass]="{ 'text-yellow-500': i < review.rating }"
+            >
+              {{ i < review.rating ? "star" : "star_border" }}
+            </mat-icon>
+          </div>
           <p>{{ review.comment }}</p>
-          <hr class="my-2" />
         </div>
+      </div>
+      <ng-template #noReviews>
+        <p>No reviews yet. Be the first to leave a review!</p>
+      </ng-template>
+
+      <!-- Add Review -->
+      <div
+        class="review-form-container max-w-lg mx-auto p-6 bg-gray-50 rounded-lg shadow-md"
+      >
+        <h3
+          class="form-title text-2xl font-semibold text-gray-800 mb-6 text-center"
+        >
+          Add Your Review
+        </h3>
+        <form
+          [formGroup]="reviewForm"
+          (ngSubmit)="submitReview()"
+          class="form space-y-6"
+        >
+          <div>
+            <label
+              for="comment"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >What is useful?</label
+            >
+            <textarea
+              id="comment"
+              matInput
+              formControlName="comment"
+              name="comment"
+              rows="6"
+              placeholder="Write your comment here..."
+              class="w-full p-3 text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Rating Section -->
+          <div class="rating-section">
+            <label
+              for="rating"
+              class="block text-sm font-medium text-gray-700 mb-2"
+              >Rate this:</label
+            >
+            <mat-form-field appearance="outline" class="form-field w-full">
+              <mat-select
+                formControlName="rating"
+                name="rating"
+                class="w-full text-sm border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+              >
+                <mat-option
+                  *ngFor="let star of ratingOptions"
+                  [value]="star.value"
+                >
+                  {{ star.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="reviewForm.invalid"
+            class="w-full py-3 px-4 text-white bg-blue-500 hover:bg-blue-600 rounded-lg text-sm font-medium transition duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            Submit
+          </button>
+        </form>
       </div>
     </div>
   </div>

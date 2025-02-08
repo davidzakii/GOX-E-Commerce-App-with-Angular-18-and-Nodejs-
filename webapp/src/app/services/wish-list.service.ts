@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { WishList } from '../models/wishList';
 import { Product } from '../models/product';
@@ -10,17 +10,22 @@ import { Product } from '../models/product';
 })
 export class WishListService {
   private http = inject(HttpClient);
-  productInWishList: Product[] = [];
+  productsInWishList: BehaviorSubject<Product[]> = new BehaviorSubject<Product[]>([]);
   init() {
     return this.getWishList().subscribe({
       next: (res) => {
-        this.productInWishList = res.products.map(
+        const productInWishList = res.products.map(
           (product) => product.productId
         );
+        this.productsInWishList.next(productInWishList);
+      },
+      error: (err) => {
       },
     });
   }
-
+  productInWishListAsObservable(): Observable<Product[]> {
+    return this.productsInWishList.asObservable();
+  }
   getWishList(): Observable<WishList> {
     return this.http.get<WishList>(`${environment.baseURL}/wishList`);
   }

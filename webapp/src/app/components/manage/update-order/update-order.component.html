@@ -1,0 +1,101 @@
+<div class="py-10 px-2 sm:px-20">
+  <h3>User Details</h3>
+  <div class="flex flex-wrap flex-col justify-between shadow-2xl p-5">
+    <h4>User Name: {{ order.userId?.name }}</h4>
+    <h4>User Address: {{ order.address.address1 }}</h4>
+    <h4>User Phone: {{ order.address.phoneNumber }}</h4>
+    <h4>User City: {{ order.address.city }}</h4>
+    <h4>User Postalcode: {{ order.address.postalCode }}</h4>
+  </div>
+  <h1 style="margin-top: 30px !important; margin-bottom: 5px !important">
+    Order Details
+  </h1>
+  <div class="shadow-2xl p-5 my-5">
+    <div class="flex flex-wrap justify-between">
+      <div>
+        <span class="block"
+          >Created At: {{ order.createdAt | date : "long" }}</span
+        >
+        <span>Updated At: {{ order.updatedAt | date : "long" }}</span>
+      </div>
+      <div>
+        <mat-button-toggle-group name="status" (change)="statusChange($event)">
+          <mat-button-toggle value="Dispatched">Dispatched</mat-button-toggle>
+          <mat-button-toggle value="Shipped">Shipped</mat-button-toggle>
+          <mat-button-toggle value="Delivered">Delivered</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div>
+        <mat-button-toggle-group name="paid" (change)="paidChange($event)">
+          <mat-button-toggle value="true">Paid</mat-button-toggle>
+          <mat-button-toggle value="false">No Paid</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+    @for(cart of order.items; track $index){ @if(cart.productId._id){
+    <div
+      class="flex justify-between flex-col items-center shadow my-5 p-2 sm:flex-row"
+    >
+      <button
+        class="m-2 basis-3xs block"
+        [routerLink]="'/products/' + cart.productId._id"
+      >
+        <img
+          [src]="baseURL + cart.productId.images[0]"
+          [alt]="cart.productId.name"
+          class="w-40 h-40 rounded mr-4"
+        />
+      </button>
+      <div class="my-2">
+        <h3 class="text-lg font-semibold">
+          {{ cart.productId.name }}
+        </h3>
+      </div>
+      <div class="text-right">
+        <div class="flex flex-col">
+          <p class="!text-xl text-gray-400">
+            <s>basics price: {{ cart.productId.price | currency : "EGP" }}</s>
+          </p>
+          <p class="text-xl text-orange-500">
+            dicount: {{ cart.productId.discount | currency : "EGP" + " " }} %OFF
+          </p>
+          <p class="text-lg font-semibold text-green-500">
+            Total Price:
+            {{
+              mathRound(
+                cart.quantity * cart.productId.price -
+                  (cart.quantity *
+                    cart.productId.price *
+                    cart.productId.discount) /
+                    100
+              ) | currency : "EGP"
+            }}
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center">
+        <p>Quantity: {{ cart.quantity }}</p>
+      </div>
+    </div>
+    }@else {
+    <h1>Product deleted</h1>
+    } }
+    <div class="flex flex-wrap justify-between">
+      <h3>
+        Total Amount: {{ mathRound(order.totalAmount) | currency : "EGP" }}
+      </h3>
+      <h3>paymentType: {{ order.paymentType }}</h3>
+      @if(order.status === 'Dispatched' ){
+      <h3 class="p-5 bg-red-300 rounded-lg">Status: {{ order.status }}</h3>
+      }@if(order.status === 'Shipped' ){
+      <h3 class="p-5 bg-red-100 rounded-lg">Status: {{ order.status }}</h3>
+      }@if(order.status === 'Delivered' ){
+      <h3 class="p-5 bg-green-500 rounded-lg">Status: {{ order.status }}</h3>
+      } @if(order.isPaid){
+      <h3 class="p-5 bg-green-500 rounded-lg">Paid: Paid</h3>
+      }@else {
+      <h3 class="p-5 bg-red-300 rounded-lg">Paid:No Paid</h3>
+      }
+    </div>
+  </div>
+</div>

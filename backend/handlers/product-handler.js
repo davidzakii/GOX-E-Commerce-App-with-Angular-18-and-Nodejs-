@@ -22,6 +22,15 @@ export async function updateProduct(id, model) {
   await Product.findByIdAndUpdate(id, model);
   return;
 }
+export async function updateProductQuantity(id, orderQuantity) {
+  const product = await Product.findById(id);
+  if (!product) {
+    throw new Error('Product not found');
+  }
+  product.quantity -= orderQuantity;
+  await product.save();
+  return product;
+}
 export async function deleteProduct(id) {
   await Product.findByIdAndDelete(id);
   await WishList.updateMany(
@@ -92,4 +101,38 @@ export async function getProductForListing(
     .skip(pageSize * (page - 1))
     .limit(pageSize);
   return products;
+}
+
+export async function addProductReviews(userId, productId, body) {
+  const product = await Product.findById(productId);
+  const { comment, rating } = body;
+  if (!product) return null;
+  product.reviews.push({ userId, comment, rating });
+  await product.save();
+  return product;
+}
+
+export async function getProductReviews(productId) {
+  const products = await Product.find({ _id: productId });
+  const productsWithRatings = products.map((product) => {
+    const totalRating = product.reviews.reduce(
+      (sum, review) => sum + review.rating,
+      0
+    );
+    const avgRating = product.reviews.length
+      ? totalRating / product.reviews.length
+      : 0;
+    return avgRating;
+  });
+
+  return productsWithRatings[0];
+}
+
+export async function getProductReviewsUser(productId) {
+  const product = await Product.findById(productId).populate(
+    'reviews.userId',
+    'name'
+  );
+  if (!product) return null;
+  return product.reviews;
 }

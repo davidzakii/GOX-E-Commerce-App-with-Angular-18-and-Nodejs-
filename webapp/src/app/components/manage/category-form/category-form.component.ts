@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-category-form',
@@ -56,11 +57,11 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
     if (categoryForm.valid && this.id == undefined) {
       let sub = this._CategoryService.addNewCategory(newCategory).subscribe({
         next: (data) => {
-          alert(JSON.stringify(data) + ' Category added successfully');
+          Swal.fire('Added!', JSON.stringify(data), 'success');
           this._Router.navigate(['/admin/categories']);
         },
         error: (err) => {
-          alert('Error:' + JSON.stringify(err.error.message));
+          Swal.fire('Error!', err.error.message, 'error');
         },
       });
       this.subscribtion.add(sub);
@@ -69,16 +70,20 @@ export class CategoryFormComponent implements OnInit, OnDestroy {
         .updateCategory(newCategory, this.id)
         .subscribe({
           next: (data) => {
-            alert(data.message);
+            Swal.fire('Updated!', data.message, 'success');
             this._Router.navigate(['/admin/categories']);
           },
           error: (err) => {
-            alert('Error:' + JSON.stringify(err.error.message));
+            Swal.fire('Error!', err.error.message, 'error');
           },
         });
       this.subscribtion.add(sub);
     } else {
-      alert('Please fill all the fields correctly');
+      Swal.fire(
+        'Please be focus for fields!',
+        'Please fill all the fields correctly',
+        'success'
+      );
     }
   }
 

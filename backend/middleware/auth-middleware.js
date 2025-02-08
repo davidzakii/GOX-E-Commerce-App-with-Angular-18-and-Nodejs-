@@ -16,15 +16,22 @@ export function generateToken(user) {
   );
 }
 export function verifyToken(req, res, next) {
-  const token = req.header('Authorization');
+  // console.log('Headers:', req.headers);
+  // console.log('Cookies:', req.cookies);
+  const token = req.cookies.token;
+  // console.log('Extracted token:', token);
+
   if (!token) {
     return res.status(401).send({ error: 'Access denied' });
   }
+
   try {
     const decode = jwt.verify(token, process.env.SECRETKEY);
     req.user = decode;
+    // console.log('Decoded user:', req.user);
     next();
   } catch (err) {
+    console.error('JWT verification error:', err);
     return res.status(401).send({
       error: 'Invalid Token',
       err,

@@ -13,10 +13,23 @@
   <img
     class="w-full h-52 object-cover"
     mat-card-image
-    [src]="product.images[0]"
+    [src]="baseURL + product.images[0]"
     alt="{{ product.name }}"
   />
   <mat-card-content>
+    <div class="flex justify-center items-center my-2 p-2">
+      @for (star of [1, 2, 3, 4, 5]; let i = $index; track $index) {
+      <mat-icon color="yellow" class="text-yellow-500">
+        {{
+          i < mathFloor(productRating)
+            ? "star"
+            : i < productRating
+            ? "star_half"
+            : "star_border"
+        }}
+      </mat-icon>
+      }
+    </div>
     <p class="text-gray-700 description">
       {{ product.shortDescription.split(" ").slice(0, 6).join(" ") }}...
       <span class="full-description">{{
@@ -50,14 +63,22 @@
       color="warn"
       (click)="addToWishList(); $event.stopPropagation()"
     >
-      @if(isInWishList()){
+      @if(isInWishList){
       <mat-icon class="text-red-500">favorite</mat-icon>
       }@else {
       <mat-icon class="text-red-500">favorite_border</mat-icon>
       }
     </button>
-    <button mat-fab color="warn">
+    <button
+      mat-fab
+      color="warn"
+      (click)="addToCart(); $event.stopPropagation()"
+    >
+      @if(isInCart){
+      <mat-icon>remove_shopping_cart</mat-icon>
+      }@else {
       <mat-icon>add_shopping_cart</mat-icon>
+      }
     </button>
   </mat-card-actions>
 </mat-card>

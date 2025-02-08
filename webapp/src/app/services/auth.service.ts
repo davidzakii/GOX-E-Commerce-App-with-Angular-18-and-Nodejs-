@@ -1,130 +1,137 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
-import { User } from '../models/user';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Router } from '@angular/router';
+import { User } from '../models/user';
+import { catchError, map, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  private authSubject: BehaviorSubject<boolean>;
-  constructor() {
-    this.authSubject = new BehaviorSubject<boolean>(this.isTokenValid());
-  }
+  private authSubject = new BehaviorSubject<boolean>(false);
+  private isAdminSubject = new BehaviorSubject<boolean>(false);
+  private userNameSubject = new BehaviorSubject<string>('');
+
+  constructor(private http: HttpClient, private router: Router) {}
+
   registerUser(user: User): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(
       `${environment.baseURL}/user/register`,
-      user,
-      {
-        headers: new HttpHeaders({
-          'content-type': 'application/json',
-        }),
-      }
-    );
-  }
-
-  loginUser(
-    user: User
-  ): Observable<{ message: string } | { token: string; user: User }> {
-    return this.http.post<{ message: string } | { token: string; user: User }>(
-      `${environment.baseURL}/user/login`,
       user
     );
   }
-  decodeBase64Url(base64Url: string): string {
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const padding = '='.repeat((4 - (base64.length % 4)) % 4);
-    const base64WithPadding = base64 + padding;
 
-    try {
-      const binaryString = atob(base64WithPadding);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-      return new TextDecoder('utf-8').decode(bytes);
-    } catch (error) {
-      console.error(`Base64 decoding failed. Input: ${base64Url}`, error);
-      throw error;
-    }
+  loginUser(email: string, password: string): Observable<User> {
+    return this.http
+      .post<User>(
+        `${environment.baseURL}/user/login`,
+        { email, password },
+        { withCredentials: true }
+      )
+      .pipe(
+        tap((user: User) => {
+          // Update client-side state after successful login
+          this.authSubject.next(true);
+          this.isAdminSubject.next(user.isAdmin || false);
+          this.userNameSubject.next(user.name || '');
+        })
+      );
   }
 
-  decodeJwtPayload(token: string): any {
-    try {
-      const payloadBase64 = token.split('.')[1]; // Extract payload
-      const payloadJson = this.decodeBase64Url(payloadBase64);
-      return JSON.parse(payloadJson);
-    } catch (error) {
-      console.error('Error decoding JWT payload:', error);
-      throw new Error('Invalid token payload.');
-    }
-  }
-  private isTokenValid(): boolean {
-    const token = localStorage.getItem('token') || '';
-    if (token) {
-      try {
-        const payload = this.decodeJwtPayload(token);
-        const currentTime = Math.floor(Date.now() / 1000);
-        return payload.exp > currentTime;
-      } catch (e) {
-        console.error('Inavlid token:', e);
-        this.clearLocalStorage();
-        return false;
-      }
-    } else {
-      return false;
-    }
+  login(email: string, password: string): void {
+    this.loginUser(email, password).subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: (err) => {
+        console.error('Login failed:', err);
+        alert('Invalid email or password.');
+      },
+    });
   }
 
-  private clearLocalStorage() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  logout(): void {
+    this.http
+      .post(`${environment.baseURL}/user/logout`, {}, { withCredentials: true })
+      .subscribe({
+        next: () => {
+          this.clearClientState();
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          console.error('Logout failed:', err);
+        },
+      });
+  }
+
+  checkSessionValidity(): Observable<boolean> {
+    return this.http
+      .get<{ valid: boolean; user?: User }>(
+        `${environment.baseURL}/user/validate-session`,
+        { withCredentials: true }
+      )
+      .pipe(
+        map((response) => {
+          const isValid = response.valid && !!response.user;
+          this.authSubject.next(isValid);
+          if (isValid && response.user) {
+            this.isAdminSubject.next(response.user.isAdmin || false);
+            this.userNameSubject.next(response.user.name || '');
+          } else {
+            this.clearClientState();
+          }
+          return isValid;
+        }),
+        tap((isValid) => {
+          // console.log('Session Validity:', isValid);
+        }),
+        catchError((err) => {
+          // console.error('Session validation failed:', err.error);
+          this.authSubject.next(false);
+          return of(false);
+        })
+      );
+  }
+
+  private clearClientState(): void {
+    this.authSubject.next(false);
+    this.isAdminSubject.next(false);
+    this.userNameSubject.next('');
   }
 
   userLoggedAsObservable(): Observable<boolean> {
     return this.authSubject.asObservable();
   }
 
+  get isUserLoggedInValue(): boolean {
+    return this.authSubject.value;
+  }
+
   get isUserLoggedIn(): BehaviorSubject<boolean> {
     return this.authSubject;
   }
 
-  get userName(): string {
-    const token = localStorage.getItem('token');
-    if (this.isTokenValid() && token) {
-      const payload = this.decodeJwtPayload(token);
-      return payload.name || '';
-    }
-    return '';
+  userNameAsObservable(): Observable<string> {
+    return this.userNameSubject.asObservable();
   }
-  get isAdmin(): boolean {
-    const token = localStorage.getItem('token');
-    if (this.isTokenValid() && token) {
-      const payload = this.decodeJwtPayload(token);
-      return payload.isAdmin || false;
-    }
-    return false;
+
+  get userName(): BehaviorSubject<string> {
+    return this.userNameSubject;
   }
-  login(token: string, user: object): void {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    this.authSubject.next(true);
-    this.router.navigate(['/home']);
+
+  get userNameValue(): string {
+    return this.userNameSubject.value;
   }
-  logout() {
-    this.clearLocalStorage();
-    this.authSubject.next(false);
-    this.router.navigate(['/home']);
+
+  isAdminAsObservable(): Observable<boolean> {
+    return this.isAdminSubject.asObservable();
   }
-  checkSessionValidity(): void {
-    const token = localStorage.getItem('token');
-    if (token && !this.isTokenValid()) {
-      alert('Your session has expired. Please log in again.');
-      this.logout();
-    }
+
+  get isAdmin(): BehaviorSubject<boolean> {
+    return this.isAdminSubject;
+  }
+
+  get isAdminValue(): boolean {
+    return this.isAdminSubject.value;
   }
 }
